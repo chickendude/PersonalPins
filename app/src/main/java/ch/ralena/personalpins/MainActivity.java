@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import ch.ralena.personalpins.fragments.BoardFragment;
 import ch.ralena.personalpins.fragments.PinsFragment;
+import ch.ralena.personalpins.fragments.TagsFragment;
 
 public class MainActivity extends AppCompatActivity {
 	BottomNavigationView bottomNavigationView;
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 					replaceFragment(new PinsFragment());
 					break;
 				case R.id.actionTags:
-					replaceFragment(new BoardFragment());
+					replaceFragment(new TagsFragment());
 					break;
 				case R.id.actionUser:
 					replaceFragment(new BoardFragment());
