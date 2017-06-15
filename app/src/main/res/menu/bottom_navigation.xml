@@ -20,9 +20,9 @@
 		android:title="@string/tags"
 		app:showAsAction="ifRoom" />
 	<item
-		android:id="@+id/actionSettings"
+		android:id="@+id/actionUser"
 		android:enabled="true"
-		android:icon="@drawable/settings"
-		android:title="@string/settings"
+		android:icon="@drawable/user"
+		android:title="@string/user"
 		app:showAsAction="ifRoom" />
 </menu>
