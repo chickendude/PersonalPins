@@ -35,7 +35,13 @@ dependencies {
 	compile 'com.android.support:design:25.3.1'
 	compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
+	compile 'android.arch.persistence.room:runtime:1.0.0-alpha3'
+	annotationProcessor 'android.arch.persistence.room:compiler:1.0.0-alpha1'
+
 	// 3rd party
 	compile 'com.jakewharton:butterknife:8.6.0'
+	compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+	compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+	compile 'com.squareup.picasso:picasso:2.5.2'
 
 }
