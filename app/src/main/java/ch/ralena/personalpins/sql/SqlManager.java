@@ -39,6 +39,7 @@ public class SqlManager {
 	}
 
 	public List<Pin> getPins() {
+		database.delete(SqlHelper.TABLE_PIN, BaseColumns._ID + ">-1", null);
 		List<Pin> pins = new ArrayList<>();
 		Cursor cursor = database.rawQuery(
 				"SELECT * FROM " + SqlHelper.TABLE_PIN,
@@ -61,7 +62,7 @@ public class SqlManager {
 
 		Cursor cursor = database.rawQuery(
 				"SELECT " + SqlHelper.COL_PINTAG_FOREIGNKEY_TAG + " FROM " + SqlHelper.TABLE_PINTAG +
-						" WHERE " + SqlHelper.COL_PINTAG_FOREIGNKEY_TAG + "=" + pinId,
+						" WHERE " + SqlHelper.COL_PINTAG_FOREIGNKEY_PIN + "=" + pinId,
 				null);
 		while (cursor.moveToNext()) {
 			long tagId = cursor.getLong(0);
@@ -92,9 +93,13 @@ public class SqlManager {
 		// insert tags
 		for (Tag tag : pin.getTags()) {
 			ContentValues tagValues = new ContentValues();
-			tagValues.put(SqlHelper.COL_PINTAG_FOREIGNKEY_TAG, pin.getId());
 			tagValues.put(SqlHelper.COL_TAG_TITLE, tag.getTitle());
-			database.insert(SqlHelper.TABLE_TAG, null, tagValues);
+			long tagId = database.insert(SqlHelper.TABLE_TAG, null, tagValues);
+
+			ContentValues pintagValues = new ContentValues();
+			pintagValues.put(SqlHelper.COL_PINTAG_FOREIGNKEY_PIN, pinId);
+			pintagValues.put(SqlHelper.COL_PINTAG_FOREIGNKEY_TAG, tagId);
+			database.insert(SqlHelper.TABLE_PINTAG, null, pintagValues);
 		}
 
 		return pinId;

@@ -3,6 +3,8 @@ package ch.ralena.personalpins;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.facebook.stetho.Stetho;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,12 +26,13 @@ public class SQLitePinTest {
 	@Before
 	public void createDb() {
 		sqlManager = new SqlManager(InstrumentationRegistry.getTargetContext());
+		Stetho.initializeWithDefaults(InstrumentationRegistry.getTargetContext());
 		sqlManager.open();
 	}
 
 	@After
 	public void closeDb() {
-//		sqlManager.close();
+		sqlManager.close();
 	}
 
 	@Test
@@ -42,7 +45,8 @@ public class SQLitePinTest {
 
 		// act
 		sqlManager.insertPin(pin);
-		Pin pin2 = sqlManager.getPins().get(0);
+		List<Pin> pins = sqlManager.getPins();
+		Pin pin2 = pins.get(pins.size()-1);
 
 		//assert
 		assertEquals(pin, pin2);

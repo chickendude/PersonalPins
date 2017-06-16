@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.facebook.stetho.Stetho;
+
 import ch.ralena.personalpins.fragments.BoardFragment;
 import ch.ralena.personalpins.fragments.PinsFragment;
 import ch.ralena.personalpins.fragments.TagsFragment;
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		Stetho.initializeWithDefaults(this);
 
 		fragmentManager = getSupportFragmentManager();
 		bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
