@@ -7,13 +7,33 @@
 	android:layout_height="match_parent"
 	tools:context="ch.ralena.personalpins.MainActivity">
 
-	<FrameLayout
-		android:id="@+id/frameContainer"
+	<android.support.design.widget.CoordinatorLayout
+		android:id="@+id/coordinaorLayout"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_above="@+id/bottomNavigationView"
-		android:layout_alignParentTop="true"
-		/>
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true">
+
+		<android.support.design.widget.AppBarLayout
+			android:id="@+id/appBarLayout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<android.support.v7.widget.Toolbar
+				android:id="@+id/toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"
+				android:background="?attr/colorPrimary"
+				app:layout_scrollFlags="scroll|enterAlways"
+				android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+		</android.support.design.widget.AppBarLayout>
+		<FrameLayout
+			android:id="@+id/frameContainer"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_above="@+id/bottomNavigationView"
+			android:layout_below="@id/coordinaorLayout"
+			app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+	</android.support.design.widget.CoordinatorLayout>
 
 	<android.support.design.widget.BottomNavigationView
 		android:id="@+id/bottomNavigationView"
@@ -24,5 +44,4 @@
 		app:itemIconTint="@color/colorIcons"
 		app:itemTextColor="@color/colorPrimaryLight"
 		app:menu="@menu/bottom_navigation"/>
-
 </RelativeLayout>

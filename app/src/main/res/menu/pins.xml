@@ -3,22 +3,22 @@
 	  xmlns:app="http://schemas.android.com/apk/res-auto">
 	<item
 		android:id="@+id/actionTakePicture"
-		android:icon="@drawable/ic_add_tag"
-		android:title="Take Picture"
+		android:icon="@drawable/ic_camera"
+		android:title="@string/take_picture"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/actionTakeVideo"
-		android:icon="@drawable/ic_add_tag"
-		android:title="Take Video"
+		android:icon="@drawable/ic_video"
+		android:title="@string/take_video"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/actionChoosePicture"
 		android:icon="@drawable/ic_add_tag"
-		android:title="Choose Picture"
+		android:title="@string/choose_picture"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/actionChooseVideo"
 		android:icon="@drawable/ic_add_tag"
-		android:title="Choose Video"
+		android:title="@string/choose_video"
 		app:showAsAction="ifRoom"/>
 </menu>

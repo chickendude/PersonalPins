@@ -1,10 +1,13 @@
 package ch.ralena.personalpins;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import ch.ralena.personalpins.fragments.BoardFragment;
 import ch.ralena.personalpins.fragments.PinsFragment;
@@ -13,19 +16,21 @@ import ch.ralena.personalpins.fragments.UserFragment;
 import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity {
-	BottomNavigationView bottomNavigationView;
+	public AppBarLayout appBarLayout;
+	private BottomNavigationView bottomNavigationView;
 
 	FragmentManager fragmentManager;
-
-	private Realm realm;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
+
 		Realm.init(this);
-		realm = Realm.getDefaultInstance();
 
 		fragmentManager = getSupportFragmentManager();
 		bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
@@ -54,4 +59,17 @@ public class MainActivity extends AppCompatActivity {
 				.replace(R.id.frameContainer, fragment)
 				.commit();
 	}
+
+	public void showActionBar() {
+		appBarLayout.setExpanded(true);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			getSupportFragmentManager().popBackStack();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 }

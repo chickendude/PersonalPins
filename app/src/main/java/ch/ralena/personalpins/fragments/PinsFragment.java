@@ -1,28 +1,35 @@
 package ch.ralena.personalpins.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
 
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.adapters.PinsAdapter;
 import ch.ralena.personalpins.objects.Pin;
-import ch.ralena.personalpins.objects.Tag;
 import io.realm.Realm;
 
 public class PinsFragment extends Fragment {
 	private static final String TAG = PinsFragment.class.getSimpleName();
+	private static final int REQUEST_TAKE_PHOTO = 0;
+	private static final int REQUEST_TAKE_VIDEO = 1;
+	private static final int REQUEST_CHOOSE_PICTURE = 2;
+	private static final int REQUEST_CHOOSE_VIDEO = 3;
+	public static final String EXTRA_FILEPATH = "extra_filepath";
+
 	Realm realm;
 	List<Pin> pins;
 
@@ -72,33 +79,61 @@ public class PinsFragment extends Fragment {
 		return true;
 	}
 
-	private void choosePicture() {
+	private void takePicture() {
+	}
 
+	private void takeVideo() {
+	}
+
+	private void choosePicture() {
+		Intent pickPhotoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+		pickPhotoIntent.setType("image/*");
+		startActivityForResult(pickPhotoIntent, REQUEST_CHOOSE_PICTURE);
 	}
 
 	private void chooseVideo() {
 
 	}
 
-	private void takeVideo() {
-	}
-
-	private void takePicture() {
-		createPin();
-	}
-
-	private void createPin() {
-		Log.d(TAG, "Creating pin #" + pins.size());
-		realm.executeTransaction(r -> {
-			Pin pin = r.createObject(Pin.class);
-			pin.setTitle("Pin #" + pins.size());
-			pin.setNote("This is a note.");
-			List<Tag> tags = r.where(Tag.class).findAll();
-			if (tags.size() > 0) {
-				pin.getTags().addAll(tags);
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == Activity.RESULT_OK) {
+			String filepath = "";
+			if (requestCode == REQUEST_CHOOSE_PICTURE) {
+				if (data != null) {
+					Toast.makeText(getContext(), data.getData().toString(), Toast.LENGTH_SHORT).show();
+					filepath = data.getData().toString();
+				}
 			}
-		});
-		adapter.notifyDataSetChanged();
+			if (!filepath.equals("")) {
+				createPin(filepath);
+			}
+		}
+	}
+
+	private void createPin(String filepath) {
+		Bundle bundle = new Bundle();
+		bundle.putString(EXTRA_FILEPATH, filepath);
+		NewPinFragment fragment = new NewPinFragment();
+		fragment.setArguments(bundle);
+
+		getFragmentManager().beginTransaction()
+				.replace(R.id.frameContainer, fragment)
+				.addToBackStack(null)
+				.commit();
+
+//		Log.d(TAG, "Creating pin #" + pins.size());
+//		realm.executeTransaction(r -> {
+//			Pin pin = r.createObject(Pin.class);
+//			pin.setTitle("Pin #" + pins.size());
+//			pin.setNote("This is a note.");
+//			List<Tag> tags = r.where(Tag.class).findAll();
+//			if (tags.size() > 0) {
+//				pin.getTags().addAll(tags);
+//			}
+//		});
+//		adapter.notifyDataSetChanged();
 	}
 
 	private void closeFAB() {
