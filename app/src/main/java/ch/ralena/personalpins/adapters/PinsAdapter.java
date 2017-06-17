@@ -11,6 +11,7 @@ import java.util.List;
 
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.objects.Pin;
+import ch.ralena.personalpins.objects.Tag;
 
 public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 	private static final int TYPE_PIN = 0;
@@ -53,15 +54,27 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	private class ViewHolder extends RecyclerView.ViewHolder {
 		TextView title;
+		TextView tags;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
 			title = (TextView) itemView.findViewById(R.id.pinTitle);
+			tags = (TextView) itemView.findViewById(R.id.tags);
 		}
 
 		public void bindView(Pin pin) {
 			Log.d("TAG", pin.getTitle());
 			title.setText(pin.getTitle());
+
+			StringBuilder stringBuilder = new StringBuilder();
+			int position = 0;
+			for (Tag tag : pin.getTags()) {
+				stringBuilder.append(tag.getTitle());
+				if (++position < pin.getTags().size()) {
+					stringBuilder.append(", ");
+				}
+			}
+			tags.setText(stringBuilder.toString());
 		}
 	}
 

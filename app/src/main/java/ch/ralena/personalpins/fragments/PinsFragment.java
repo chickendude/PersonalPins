@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -37,6 +38,7 @@ public class PinsFragment extends Fragment {
 		// initialize pins
 		pins = realm.where(Pin.class).findAll();
 
+
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
 		adapter = new PinsAdapter(pins);
@@ -51,6 +53,40 @@ public class PinsFragment extends Fragment {
 		inflater.inflate(R.menu.pins, menu);
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.actionTakePicture:
+				takePicture();
+				break;
+			case R.id.actionTakeVideo:
+				takeVideo();
+				break;
+			case R.id.actionChoosePicture:
+				choosePicture();
+				break;
+			case R.id.actionChooseVideo:
+				chooseVideo();
+				break;
+		}
+		return true;
+	}
+
+	private void choosePicture() {
+
+	}
+
+	private void chooseVideo() {
+
+	}
+
+	private void takeVideo() {
+	}
+
+	private void takePicture() {
+		createPin();
+	}
+
 	private void createPin() {
 		Log.d(TAG, "Creating pin #" + pins.size());
 		realm.executeTransaction(r -> {
@@ -59,7 +95,7 @@ public class PinsFragment extends Fragment {
 			pin.setNote("This is a note.");
 			List<Tag> tags = r.where(Tag.class).findAll();
 			if (tags.size() > 0) {
-//				pin.getTags().addAll(tags);
+				pin.getTags().addAll(tags);
 			}
 		});
 		adapter.notifyDataSetChanged();
