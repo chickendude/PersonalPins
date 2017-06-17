@@ -1,9 +1,17 @@
 package ch.ralena.personalpins.objects;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+
 import java.util.Objects;
 
-public class Tag {
+@Table(name = "tags")
+public class Tag extends Model {
+	@Column(name = "title")
 	private String title;
+
+	public Tag() {super();	}
 
 	public Tag(String title) {
 		this.title = title;

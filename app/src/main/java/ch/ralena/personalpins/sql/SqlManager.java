@@ -39,7 +39,10 @@ public class SqlManager {
 	}
 
 	public List<Pin> getPins() {
-		database.delete(SqlHelper.TABLE_PIN, BaseColumns._ID + ">-1", null);
+//		database.delete(SqlHelper.TABLE_PIN, BaseColumns._ID + ">-1", null);
+//		database.delete(SqlHelper.TABLE_PINTAG, BaseColumns._ID + ">-1", null);
+//		database.delete(SqlHelper.TABLE_TAG, BaseColumns._ID + ">-1", null);
+
 		List<Pin> pins = new ArrayList<>();
 		Cursor cursor = database.rawQuery(
 				"SELECT * FROM " + SqlHelper.TABLE_PIN,
@@ -77,7 +80,8 @@ public class SqlManager {
 				"SELECT " + SqlHelper.COL_TAG_TITLE + " FROM " + SqlHelper.TABLE_TAG +
 						" WHERE " + BaseColumns._ID + "=" + tagId,
 				null);
-		String title = getString(cursor, SqlHelper.COL_TAG_TITLE);
+		cursor.moveToFirst();
+		String title = cursor.getString(0);
 		return new Tag(title);
 	}
 

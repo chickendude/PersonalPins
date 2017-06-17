@@ -1,19 +1,32 @@
 package ch.ralena.personalpins.objects;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Pin {
+@Table(name = "model")
+public class Pin extends Model {
 	public static final String TYPE_VIDEO = "video";
 	public static final String TYPE_PICTURE = "picture";
 
-	private long id;
+	@Column(name = "title")
 	private String title;
+	@Column(name = "type")
 	private String type;
+	@Column(name = "note")
 	private String note;
+	@Column(name = "filepath")
 	private String filepath;
+
 	private List<Tag> tags;
+
+	public Pin() {
+		super();
+	}
 
 	public Pin(long id, String title, String type, String note, String filepath, List<Tag> tags) {
 		this.title = title;
@@ -27,14 +40,6 @@ public class Pin {
 		this.type = type;
 		this.filepath = filepath;
 		tags = new ArrayList<>();
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	public String getTitle() {
@@ -75,6 +80,10 @@ public class Pin {
 
 	public void setFilepath(String filepath) {
 		this.filepath = filepath;
+	}
+
+	public List<Tag> tags() {
+		return getMany(Tag.class, "Pin");
 	}
 
 	@Override

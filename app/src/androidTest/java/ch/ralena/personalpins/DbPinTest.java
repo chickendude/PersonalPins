@@ -3,9 +3,9 @@ package ch.ralena.personalpins;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.activeandroid.ActiveAndroid;
 import com.facebook.stetho.Stetho;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,24 +15,16 @@ import java.util.List;
 
 import ch.ralena.personalpins.objects.Pin;
 import ch.ralena.personalpins.objects.Tag;
-import ch.ralena.personalpins.sql.SqlManager;
 
 import static junit.framework.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
-public class SQLitePinTest {
-	private SqlManager sqlManager;
+public class DbPinTest {
 
 	@Before
-	public void createDb() {
-		sqlManager = new SqlManager(InstrumentationRegistry.getTargetContext());
+	public void setup() {
 		Stetho.initializeWithDefaults(InstrumentationRegistry.getTargetContext());
-		sqlManager.open();
-	}
-
-	@After
-	public void closeDb() {
-		sqlManager.close();
+		ActiveAndroid.initialize(InstrumentationRegistry.getTargetContext());
 	}
 
 	@Test
@@ -44,9 +36,8 @@ public class SQLitePinTest {
 		Pin pin = new Pin(0, "Test Pin", Pin.TYPE_PICTURE, "note", "/home/coolstuff", tags);
 
 		// act
-		sqlManager.insertPin(pin);
-		List<Pin> pins = sqlManager.getPins();
-		Pin pin2 = pins.get(pins.size()-1);
+		pin.save();
+		Pin pin2 = Pin.load(Pin.class, pin.getId());
 
 		//assert
 		assertEquals(pin, pin2);
