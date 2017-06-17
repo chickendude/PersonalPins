@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	  xmlns:app="http://schemas.android.com/apk/res-auto">
+	<item
+		android:id="@+id/actionTakePicture"
+		android:icon="@drawable/ic_add_tag"
+		android:title="Take Picture"
+		app:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/actionTakeVideo"
+		android:icon="@drawable/ic_add_tag"
+		android:title="Take Video"
+		app:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/actionChoosePicture"
+		android:icon="@drawable/ic_add_tag"
+		android:title="Choose Picture"
+		app:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/actionChooseVideo"
+		android:icon="@drawable/ic_add_tag"
+		android:title="Choose Video"
+		app:showAsAction="ifRoom"/>
+</menu>

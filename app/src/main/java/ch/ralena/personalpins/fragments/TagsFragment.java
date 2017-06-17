@@ -22,10 +22,10 @@ import io.realm.Realm;
 
 public class TagsFragment extends Fragment {
 	private static final String TAG = TagsFragment.class.getSimpleName();
-	RecyclerView recyclerView;
-	Realm realm;
-	List<Tag> tags;
-	TagsAdapter adapter;
+
+	private Realm realm;
+	private List<Tag> tags;
+	private TagsAdapter adapter;
 
 	@Nullable
 	@Override
@@ -35,7 +35,7 @@ public class TagsFragment extends Fragment {
 
 		tags = realm.where(Tag.class).findAll();
 
-		recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
 		adapter = new TagsAdapter(tags);
 		recyclerView.setAdapter(adapter);

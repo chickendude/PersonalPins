@@ -1,7 +1,6 @@
 package ch.ralena.personalpins.objects;
 
 import java.util.List;
-import java.util.Objects;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -58,23 +57,5 @@ public class Pin extends RealmObject {
 
 	public void setFilepath(String filepath) {
 		this.filepath = filepath;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (obj.getClass() != this.getClass())
-			return false;
-		// fields
-
-		Pin pin = (Pin) obj;
-		return Objects.equals(title, pin.title) &&
-				Objects.equals(type, pin.type) &&
-				Objects.equals(note, pin.note) &&
-				Objects.equals(filepath, pin.filepath) &&
-				Objects.equals(tags, pin.tags);
 	}
 }
