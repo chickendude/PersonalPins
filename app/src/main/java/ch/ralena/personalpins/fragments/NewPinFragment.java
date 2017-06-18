@@ -1,6 +1,7 @@
 package ch.ralena.personalpins.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,10 +23,10 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.ralena.personalpins.FullScreenImageActivity;
 import ch.ralena.personalpins.MainActivity;
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.objects.Pin;
@@ -75,11 +76,18 @@ public class NewPinFragment extends Fragment {
 		ImageView thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
 		filepath = getArguments().getString(PinsFragment.EXTRA_FILEPATH);
 		if (filepath != null) {
-			File imageFile = new File(filepath);
 			Picasso.with(view.getContext())
-					.load(imageFile)
+					.load(filepath)
 					.into(thumbnail);
 		}
+		thumbnail.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
+				intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, filepath);
+				startActivity(intent);
+			}
+		});
 
 		// load tagStrings
 		tagEdit = (AutoCompleteTextView) view.findViewById(R.id.addTags);
