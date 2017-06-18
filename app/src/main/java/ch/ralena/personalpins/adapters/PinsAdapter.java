@@ -72,6 +72,8 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			if (pin.getFilepath() != null) {
 				Picasso.with(thumbnail.getContext())
 						.load(pin.getFilepath())
+						.fit()
+						.centerCrop()
 						.into(thumbnail);
 			}
 
