@@ -13,10 +13,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.List;
 
+import ch.ralena.personalpins.MainActivity;
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.adapters.PinsAdapter;
 import ch.ralena.personalpins.objects.Pin;
@@ -30,6 +30,7 @@ public class PinsFragment extends Fragment {
 	private static final int REQUEST_CHOOSE_VIDEO = 3;
 	public static final String EXTRA_FILEPATH = "extra_filepath";
 
+	private MainActivity mainActivity;
 	Realm realm;
 	List<Pin> pins;
 
@@ -41,6 +42,8 @@ public class PinsFragment extends Fragment {
 		realm = Realm.getDefaultInstance();
 		View view = inflater.inflate(R.layout.fragment_pins, container, false);
 		setHasOptionsMenu(true);
+
+		mainActivity = (MainActivity) getActivity();
 
 		// initialize pins
 		pins = realm.where(Pin.class).findAll();
@@ -102,7 +105,6 @@ public class PinsFragment extends Fragment {
 			String filepath = "";
 			if (requestCode == REQUEST_CHOOSE_PICTURE) {
 				if (data != null) {
-					Toast.makeText(getContext(), data.getData().toString(), Toast.LENGTH_SHORT).show();
 					filepath = data.getData().toString();
 				}
 			}

@@ -5,7 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -38,7 +41,7 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-		if(position < pins.size())
+		if (position < pins.size())
 			((ViewHolder) holder).bindView(pins.get(position));
 	}
 
@@ -53,16 +56,25 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 	}
 
 	private class ViewHolder extends RecyclerView.ViewHolder {
+		ImageView thumbnail;
 		TextView title;
 		TextView tags;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
+			thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
 			title = (TextView) itemView.findViewById(R.id.pinTitle);
 			tags = (TextView) itemView.findViewById(R.id.tags);
 		}
 
 		public void bindView(Pin pin) {
+			Log.d(TAG, "" + pin.getFilepath());
+			if (pin.getFilepath() != null) {
+				Picasso.with(thumbnail.getContext())
+						.load(pin.getFilepath())
+						.into(thumbnail);
+			}
+
 			title.setText(pin.getTitle());
 
 			StringBuilder stringBuilder = new StringBuilder();

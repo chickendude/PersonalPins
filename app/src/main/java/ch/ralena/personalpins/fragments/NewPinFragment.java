@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -17,6 +18,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -25,16 +27,23 @@ import java.util.List;
 
 import ch.ralena.personalpins.MainActivity;
 import ch.ralena.personalpins.R;
+import ch.ralena.personalpins.objects.Pin;
 import ch.ralena.personalpins.objects.Tag;
 import io.realm.Realm;
 
 public class NewPinFragment extends Fragment {
 	private MainActivity mainActivity;
+
+	// views
 	private ActionBar toolbar;
 	private LinearLayout tagLayout;
+	private TextView tagTitle;
+	private TextView tagNote;
 	private AutoCompleteTextView tagEdit;
-	private ArrayAdapter<String> arrayAdapter;
+
+	String filepath;
 	private Realm realm;
+	private ArrayAdapter<String> arrayAdapter;
 	private List<String> tagStrings;
 	private List<Tag> tags;
 
@@ -58,10 +67,12 @@ public class NewPinFragment extends Fragment {
 		// load views
 		View view = inflater.inflate(R.layout.fragment_new_pin, container, false);
 		tagLayout = (LinearLayout) view.findViewById(R.id.tagLayout);
+		tagTitle = (TextView) view.findViewById(R.id.title);
+		tagNote = (TextView) view.findViewById(R.id.note);
 
 		// load thumbnail
 		ImageView thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-		String filepath = getArguments().getString(PinsFragment.EXTRA_FILEPATH);
+		filepath = getArguments().getString(PinsFragment.EXTRA_FILEPATH);
 		Picasso.with(view.getContext())
 				.load(filepath)
 				.into(thumbnail);
@@ -85,14 +96,11 @@ public class NewPinFragment extends Fragment {
 		title.setText(tagTitle);
 		tagLayout.addView(tagView);
 
-		tagView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				String title = ((TextView) v.findViewById(R.id.tagTitle)).getText().toString();
-				Tag tag = new Tag(title);
-				tags.remove(tag);
-				((ViewGroup) v.getParent()).removeView(v);
-			}
+		tagView.setOnClickListener(v -> {
+			String title1 = ((TextView) v.findViewById(R.id.tagTitle)).getText().toString();
+			Tag tag = new Tag(title1);
+			tags.remove(tag);
+			((ViewGroup) v.getParent()).removeView(v);
 		});
 	}
 
@@ -139,6 +147,26 @@ public class NewPinFragment extends Fragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.ok, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.actionConfirm) {
+			if (tagTitle.getText().toString().trim().length() > 0) {
+				realm.executeTransaction(r -> {
+					Pin pin = r.createObject(Pin.class);
+					pin.setTitle(tagTitle.getText().toString());
+					pin.setNote(tagNote.getText().toString());
+					pin.setFilepath(filepath);
+					pin.getTags().addAll(tags);
+				});
+				getFragmentManager().popBackStack();
+			} else {
+				Toast.makeText(mainActivity, "Please add a title", Toast.LENGTH_SHORT).show();
+			}
+			return true;
+		}
+		return false;
 	}
 
 	@Override
