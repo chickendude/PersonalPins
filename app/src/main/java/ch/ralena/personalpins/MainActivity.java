@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import ch.ralena.personalpins.fragments.BoardFragment;
 import ch.ralena.personalpins.fragments.PinsFragment;
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 		fragmentManager = getSupportFragmentManager();
 		bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
 		bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-			switch(item.getItemId()) {
+			switch (item.getItemId()) {
 				case R.id.actionBoard:
 					replaceFragment(new BoardFragment());
 					break;
@@ -69,6 +71,20 @@ public class MainActivity extends AppCompatActivity {
 					// explain why
 				}
 				requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_EXTERNAL);
+				return;
+			}
+		}
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode == REQUEST_READ_EXTERNAL) {
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+			} else {
+				Toast.makeText(this, "Sorry, we need read permission to continue", Toast.LENGTH_SHORT).show();
+				finishAffinity();
 			}
 		}
 	}
