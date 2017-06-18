@@ -73,6 +73,9 @@
 			android:drawableLeft="@drawable/tags"
 			android:drawablePadding="8dp"
 			android:hint="Add Tags"
+			android:imeActionLabel="Add"
+			android:imeOptions="actionSend"
+			android:inputType="textAutoComplete"
 			android:textSize="18sp"/>
 
 		<HorizontalScrollView

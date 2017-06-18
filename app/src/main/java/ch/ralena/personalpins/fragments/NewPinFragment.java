@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -68,9 +69,24 @@ public class NewPinFragment extends Fragment {
 		// load tagStrings
 		tagEdit = (AutoCompleteTextView) view.findViewById(R.id.addTags);
 		tagEdit.setOnClickListener(v -> tagEdit.showDropDown());
+		tagEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (event != null && event.getAction() != KeyEvent.ACTION_DOWN) {
+					return false;
+				} else {
+					String tagTitle = v.getText().toString();
+					Tag tag = new Tag(tagTitle);
+					if (!tags.contains(tag)) {
+						tagEdit.setText("");
+						addTag(tagTitle);
+					}
+					return true;
+				}
+			}
+		});
 		tagEdit.setOnItemClickListener((parent, clickedView, position, id) -> {
 			String tagTitle = parent.getItemAtPosition(position).toString();
-//			Tag tag = new Tag(tagTitle);
 			if (tagStrings.contains(tagTitle)) {
 				tagEdit.setText("");
 				addTag(tagTitle);
@@ -82,7 +98,6 @@ public class NewPinFragment extends Fragment {
 	}
 
 	private void addTag(String tagTitle) {
-		tagStrings.remove(tagTitle);
 		arrayAdapter.notifyDataSetChanged();
 		tags.add(new Tag(tagTitle));
 
