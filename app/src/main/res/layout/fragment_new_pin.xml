@@ -1,63 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-											 xmlns:app="http://schemas.android.com/apk/res-auto"
-											 xmlns:tools="http://schemas.android.com/tools"
-											 android:layout_width="match_parent"
-											 android:layout_height="match_parent"
-											 android:orientation="vertical">
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
-	<EditText
-		android:id="@+id/title"
-		android:layout_width="0dp"
-		android:layout_height="wrap_content"
-		android:layout_marginEnd="8dp"
-		android:layout_marginLeft="8dp"
-		android:layout_marginRight="8dp"
-		android:layout_marginStart="8dp"
-		android:drawableLeft="@drawable/ic_title"
-		android:drawablePadding="8dp"
-		android:background="@android:color/transparent"
-		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintRight_toLeftOf="@+id/thumbnail"
-		app:layout_constraintTop_toTopOf="@+id/thumbnail"
-		tools:text="Image title"
-		app:layout_constraintBottom_toBottomOf="@+id/thumbnail"
-		android:layout_marginBottom="8dp"/>
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					xmlns:app="http://schemas.android.com/apk/res-auto"
+					xmlns:tools="http://schemas.android.com/tools"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:orientation="vertical">
 
-	<ImageView
-		android:id="@+id/thumbnail"
-		android:layout_width="50dp"
-		android:layout_height="50dp"
-		android:layout_marginEnd="8dp"
-		android:layout_marginRight="8dp"
-		android:layout_marginTop="8dp"
-		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toTopOf="parent"/>
+		<EditText
+			android:id="@+id/title"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@+id/thumbnail"
+			android:layout_alignTop="@+id/thumbnail"
+			android:layout_marginLeft="8dp"
+			android:layout_marginRight="8dp"
+			android:layout_toLeftOf="@+id/thumbnail"
+			android:background="@android:color/transparent"
+			android:drawableLeft="@drawable/ic_title"
+			android:drawablePadding="8dp"
+			android:hint="Image title"/>
 
-	<View
-		android:layout_width="368dp"
-		android:layout_height="1dp"
-		android:layout_margin="8dp"
-		android:background="@android:color/darker_gray"
-		app:layout_constraintBottom_toBottomOf="@+id/thumbnail"
-		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/thumbnail"/>
+		<ImageView
+			android:id="@+id/thumbnail"
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_alignParentEnd="true"
+			android:layout_margin="12dp"/>
 
-	<EditText
-		android:id="@+id/note"
-		android:layout_width="0dp"
-		android:layout_height="wrap_content"
-		android:gravity="bottom"
-		android:background="@android:color/transparent"
-		android:layout_margin="8dp"
-		android:drawableLeft="@drawable/ic_note"
-		android:drawablePadding="8dp"
-		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/thumbnail"
-		tools:text="Notes about the image"/>
+		<View
+			android:id="@+id/div1"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_below="@id/thumbnail"
+			android:layout_margin="12dp"
+			android:background="@android:color/darker_gray"/>
 
+		<EditText
+			android:id="@+id/note"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/div1"
+			android:layout_margin="12dp"
+			android:background="@android:color/transparent"
+			android:drawableLeft="@drawable/ic_note"
+			android:drawablePadding="8dp"
+			android:gravity="bottom"
+			android:hint="Notes"/>
 
+		<View
+			android:id="@+id/div2"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_below="@id/note"
+			android:layout_margin="12dp"
+			android:layout_marginTop="18dp"
+			android:background="@android:color/darker_gray"/>
 
-</android.support.constraint.ConstraintLayout>
+		<AutoCompleteTextView
+			android:id="@+id/addTags"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/div2"
+			android:layout_marginLeft="12dp"
+			android:layout_marginRight="12dp"
+			android:background="@android:color/transparent"
+			android:completionThreshold="1"
+			android:drawableLeft="@drawable/tags"
+			android:drawablePadding="8dp"
+			android:hint="Add Tags"
+			android:textSize="18sp"/>
+
+		<HorizontalScrollView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/addTags"
+			android:scrollbars="none">
+
+			<LinearLayout
+				android:id="@+id/tagLayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+			</LinearLayout>
+		</HorizontalScrollView>
+
+	</RelativeLayout>
+</ScrollView>

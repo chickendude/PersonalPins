@@ -63,7 +63,6 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		}
 
 		public void bindView(Pin pin) {
-			Log.d("TAG", pin.getTitle());
 			title.setText(pin.getTitle());
 
 			StringBuilder stringBuilder = new StringBuilder();

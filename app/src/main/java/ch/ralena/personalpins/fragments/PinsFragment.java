@@ -123,7 +123,6 @@ public class PinsFragment extends Fragment {
 				.addToBackStack(null)
 				.commit();
 
-//		Log.d(TAG, "Creating pin #" + pins.size());
 //		realm.executeTransaction(r -> {
 //			Pin pin = r.createObject(Pin.class);
 //			pin.setTitle("Pin #" + pins.size());
