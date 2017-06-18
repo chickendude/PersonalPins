@@ -2,7 +2,10 @@ package ch.ralena.personalpins.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -89,13 +92,14 @@ public class PinsFragment extends Fragment {
 	}
 
 	private void choosePicture() {
+		mainActivity.requestReadExternalStoragePermission();
 		Intent pickPhotoIntent = new Intent(Intent.ACTION_GET_CONTENT);
 		pickPhotoIntent.setType("image/*");
 		startActivityForResult(pickPhotoIntent, REQUEST_CHOOSE_PICTURE);
 	}
 
 	private void chooseVideo() {
-
+		mainActivity.requestReadExternalStoragePermission();
 	}
 
 	@Override
@@ -106,6 +110,27 @@ public class PinsFragment extends Fragment {
 			if (requestCode == REQUEST_CHOOSE_PICTURE) {
 				if (data != null) {
 					filepath = data.getData().toString();
+
+					String wholeID = DocumentsContract.getDocumentId(data.getData());
+
+					// Split at colon, use second item in the array
+					String id = wholeID.split(":")[1];
+
+					String[] column = { MediaStore.Images.Media.DATA };
+
+					// where id is equal to
+					String sel = MediaStore.Images.Media._ID + "=?";
+
+					Cursor cursor = mainActivity.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+							column, sel, new String[]{ id }, null);
+
+					int columnIndex = cursor.getColumnIndex(column[0]);
+
+					if (cursor.moveToFirst()) {
+						filepath = cursor.getString(columnIndex);
+					}
+					cursor.close();
+
 				}
 			}
 			if (!filepath.equals("")) {

@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,9 +74,12 @@ public class NewPinFragment extends Fragment {
 		// load thumbnail
 		ImageView thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
 		filepath = getArguments().getString(PinsFragment.EXTRA_FILEPATH);
-		Picasso.with(view.getContext())
-				.load(filepath)
-				.into(thumbnail);
+		if (filepath != null) {
+			File imageFile = new File(filepath);
+			Picasso.with(view.getContext())
+					.load(imageFile)
+					.into(thumbnail);
+		}
 
 		// load tagStrings
 		tagEdit = (AutoCompleteTextView) view.findViewById(R.id.addTags);

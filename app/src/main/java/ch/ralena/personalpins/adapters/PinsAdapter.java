@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 import ch.ralena.personalpins.R;
@@ -70,8 +71,9 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		public void bindView(Pin pin) {
 			Log.d(TAG, "" + pin.getFilepath());
 			if (pin.getFilepath() != null) {
+				File imageFile = new File(pin.getFilepath());
 				Picasso.with(thumbnail.getContext())
-						.load(pin.getFilepath())
+						.load(imageFile)
 						.into(thumbnail);
 			}
 
