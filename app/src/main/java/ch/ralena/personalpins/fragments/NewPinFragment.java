@@ -68,30 +68,7 @@ public class NewPinFragment extends Fragment {
 
 		// load tagStrings
 		tagEdit = (AutoCompleteTextView) view.findViewById(R.id.addTags);
-		tagEdit.setOnClickListener(v -> tagEdit.showDropDown());
-		tagEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (event != null && event.getAction() != KeyEvent.ACTION_DOWN) {
-					return false;
-				} else {
-					String tagTitle = v.getText().toString();
-					Tag tag = new Tag(tagTitle);
-					if (!tags.contains(tag)) {
-						tagEdit.setText("");
-						addTag(tagTitle);
-					}
-					return true;
-				}
-			}
-		});
-		tagEdit.setOnItemClickListener((parent, clickedView, position, id) -> {
-			String tagTitle = parent.getItemAtPosition(position).toString();
-			if (tagStrings.contains(tagTitle)) {
-				tagEdit.setText("");
-				addTag(tagTitle);
-			}
-		});
+		setupTagListeners();
 		loadTags();
 
 		return view;
@@ -107,18 +84,56 @@ public class NewPinFragment extends Fragment {
 		TextView title = (TextView) tagView.findViewById(R.id.tagTitle);
 		title.setText(tagTitle);
 		tagLayout.addView(tagView);
+
+		tagView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String title = ((TextView) v.findViewById(R.id.tagTitle)).getText().toString();
+				Tag tag = new Tag(title);
+				tags.remove(tag);
+				((ViewGroup) v.getParent()).removeView(v);
+			}
+		});
 	}
 
 	private void loadTags() {
+		// get list of tags
 		tags = new ArrayList<>();
 		tagStrings = new ArrayList<>();
 		for (Tag tag : realm.where(Tag.class).findAll()) {
 			tagStrings.add(tag.getTitle());
 		}
+
+		// set up completion adapter
 		arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
 		arrayAdapter.addAll(tagStrings);
 		tagEdit.setAdapter(arrayAdapter);
 
+	}
+
+	private void setupTagListeners() {
+		// set up listeners
+		tagEdit.setOnClickListener(v -> tagEdit.showDropDown());
+		tagEdit.setOnEditorActionListener((v, actionId, event) -> {
+			if (event != null && event.getAction() != KeyEvent.ACTION_DOWN) {
+				return false;
+			} else {
+				String tagTitle = v.getText().toString();
+				Tag tag = new Tag(tagTitle);
+				if (!tags.contains(tag)) {
+					tagEdit.setText("");
+					addTag(tagTitle);
+				}
+				return true;
+			}
+		});
+		tagEdit.setOnItemClickListener((parent, clickedView, position, id) -> {
+			String tagTitle = parent.getItemAtPosition(position).toString();
+			if (tagStrings.contains(tagTitle)) {
+				tagEdit.setText("");
+				addTag(tagTitle);
+			}
+		});
 	}
 
 	@Override
