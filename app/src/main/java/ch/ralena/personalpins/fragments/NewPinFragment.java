@@ -2,6 +2,8 @@ package ch.ralena.personalpins.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
@@ -43,7 +46,7 @@ public class NewPinFragment extends Fragment {
 	private TextView tagNote;
 	private AutoCompleteTextView tagEdit;
 
-	String filepath;
+	private String filepath, filetype;
 	private Realm realm;
 	private ArrayAdapter<String> arrayAdapter;
 	private List<String> tagStrings;
@@ -73,20 +76,32 @@ public class NewPinFragment extends Fragment {
 		tagNote = (TextView) view.findViewById(R.id.note);
 
 		// load thumbnail
-		ImageView thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+		ImageView thumbnailPhoto = (ImageView) view.findViewById(R.id.thumbnailPhoto);
+		VideoView thumbnailVideo = (VideoView) view.findViewById(R.id.thumbnailVideo);
 		filepath = getArguments().getString(PinsFragment.EXTRA_FILEPATH);
+		filetype = getArguments().getString(PinsFragment.EXTRA_FILETYPE);
 		if (filepath != null) {
-			Picasso.with(view.getContext())
-					.load(filepath)
-					.into(thumbnail);
-		}
-		thumbnail.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
-				intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, filepath);
-				startActivity(intent);
+			if (filetype.equals("photo")) {
+				thumbnailPhoto.setVisibility(View.VISIBLE);
+				Picasso.with(view.getContext())
+						.load(filepath)
+						.into(thumbnailPhoto);
+			} else if (filetype.equals("video")) {
+				thumbnailVideo.setVisibility(View.VISIBLE);
+				thumbnailVideo.setVideoURI(Uri.parse(filepath));
+				thumbnailVideo.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+					@Override
+					public void onCompletion(MediaPlayer mp) {
+						thumbnailVideo.start();
+					}
+				});
+				thumbnailVideo.start();
 			}
+		}
+		thumbnailPhoto.setOnClickListener(v -> {
+			Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
+			intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, filepath);
+			startActivity(intent);
 		});
 
 		// load tagStrings
