@@ -1,12 +1,15 @@
 package ch.ralena.personalpins.adapters;
 
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
@@ -56,13 +59,17 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 	}
 
 	private class ViewHolder extends RecyclerView.ViewHolder {
-		ImageView thumbnail;
+		ImageView thumbnailImage;
+		RelativeLayout videoContainer;
+		VideoView thumbnailVideo;
 		TextView title;
 		TextView tags;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
-			thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+			thumbnailImage = (ImageView) itemView.findViewById(R.id.thumbnailImage);
+			videoContainer = (RelativeLayout) itemView.findViewById(R.id.videoContainer);
+			thumbnailVideo = (VideoView) itemView.findViewById(R.id.thumbnailVideo);
 			title = (TextView) itemView.findViewById(R.id.pinTitle);
 			tags = (TextView) itemView.findViewById(R.id.tags);
 		}
@@ -70,11 +77,20 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		public void bindView(Pin pin) {
 			Log.d(TAG, "" + pin.getFilepath());
 			if (pin.getFilepath() != null) {
-				Picasso.with(thumbnail.getContext())
-						.load(pin.getFilepath())
-						.fit()
-						.centerCrop()
-						.into(thumbnail);
+				if (pin.getType().equals("photo")) {
+					thumbnailImage.setVisibility(View.VISIBLE);
+					videoContainer.setVisibility(View.GONE);
+					Picasso.with(thumbnailImage.getContext())
+							.load(pin.getFilepath())
+							.fit()
+							.centerCrop()
+							.into(thumbnailImage);
+				} else if (pin.getType().equals("video")) {
+					thumbnailImage.setVisibility(View.GONE);
+					videoContainer.setVisibility(View.VISIBLE);
+					thumbnailVideo.setVideoURI(Uri.parse(pin.getFilepath()));
+					thumbnailVideo.seekTo(1);
+				}
 			}
 
 			title.setText(pin.getTitle());

@@ -189,6 +189,7 @@ public class NewPinFragment extends Fragment {
 					pin.setTitle(tagTitle.getText().toString());
 					pin.setNote(tagNote.getText().toString());
 					pin.setFilepath(filepath);
+					pin.setType(filetype);
 					pin.getTags().addAll(tags);
 				});
 				getFragmentManager().popBackStack();

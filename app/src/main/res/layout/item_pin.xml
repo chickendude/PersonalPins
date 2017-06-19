@@ -9,8 +9,30 @@
 			  android:elevation="2dp"
 			  android:orientation="vertical">
 
+	<RelativeLayout
+		android:id="@+id/videoContainer"
+		android:layout_width="match_parent"
+		android:layout_height="150dp">
+
+		<VideoView
+			android:id="@+id/thumbnailVideo"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentTop="true"/>
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:layout_margin="8dp"
+			android:src="@drawable/play"/>
+	</RelativeLayout>
+
 	<ImageView
-		android:id="@+id/thumbnail"
+		android:id="@+id/thumbnailImage"
 		android:layout_width="match_parent"
 		android:layout_height="150dp"/>
 
@@ -18,18 +40,18 @@
 		android:id="@+id/pinTitle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:textStyle="bold"
-		android:textSize="17sp"
 		android:textAlignment="center"
+		android:textSize="17sp"
+		android:textStyle="bold"
 		tools:text="Pin Title"/>
 
 	<TextView
 		android:id="@+id/tags"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:textColor="@color/colorSecondaryText"
 		android:ellipsize="end"
 		android:maxLines="1"
+		android:textColor="@color/colorSecondaryText"
 		tools:text="tag1, tag2, tag3, tag4"/>
 
 </LinearLayout>
