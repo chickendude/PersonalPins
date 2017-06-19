@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.ralena.personalpins.FullScreenImageActivity;
+import ch.ralena.personalpins.FullScreenVideoActivity;
 import ch.ralena.personalpins.MainActivity;
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.objects.Pin;
@@ -80,30 +82,32 @@ public class NewPinFragment extends Fragment {
 		VideoView thumbnailVideo = (VideoView) view.findViewById(R.id.thumbnailVideo);
 		filepath = getArguments().getString(PinsFragment.EXTRA_FILEPATH);
 		filetype = getArguments().getString(PinsFragment.EXTRA_FILETYPE);
-		if (filepath != null) {
+		if (filepath != null && filetype != null) {
 			if (filetype.equals("photo")) {
 				thumbnailPhoto.setVisibility(View.VISIBLE);
 				Picasso.with(view.getContext())
 						.load(filepath)
 						.into(thumbnailPhoto);
+				thumbnailPhoto.setOnClickListener(v -> {
+					Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
+					intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, filepath);
+					startActivity(intent);
+				});
 			} else if (filetype.equals("video")) {
 				thumbnailVideo.setVisibility(View.VISIBLE);
 				thumbnailVideo.setVideoURI(Uri.parse(filepath));
-				thumbnailVideo.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-					@Override
-					public void onCompletion(MediaPlayer mp) {
-						thumbnailVideo.start();
-					}
-				});
+				thumbnailVideo.setOnCompletionListener(MediaPlayer::start);
 				thumbnailVideo.start();
+				thumbnailVideo.setOnTouchListener((v, event) -> {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						Intent intent = new Intent(getActivity(), FullScreenVideoActivity.class);
+						intent.putExtra(FullScreenVideoActivity.EXTRA_VIDEO_URI, filepath);
+						startActivity(intent);
+					}
+					return true;	// super.onTouchEvent(event) ??
+				});
 			}
 		}
-		thumbnailPhoto.setOnClickListener(v -> {
-			Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
-			intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, filepath);
-			startActivity(intent);
-		});
-
 		// load tagStrings
 		tagEdit = (AutoCompleteTextView) view.findViewById(R.id.addTags);
 		setupTagListeners();
