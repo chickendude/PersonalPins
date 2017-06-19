@@ -148,7 +148,6 @@ public class NewPinFragment extends Fragment {
 		arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
 		arrayAdapter.addAll(tagStrings);
 		tagEdit.setAdapter(arrayAdapter);
-
 	}
 
 	private void setupTagListeners() {

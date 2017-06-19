@@ -80,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
 	public void showActionBar() {
 		appBarLayout.setExpanded(true);
 	}
+	public void hideActionBar() {
+		appBarLayout.setExpanded(false);
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
