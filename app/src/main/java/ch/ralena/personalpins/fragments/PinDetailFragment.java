@@ -47,12 +47,14 @@ public class PinDetailFragment extends Fragment {
 		deleteButton = (Button) view.findViewById(R.id.deleteButton);
 		deleteButton.setOnClickListener(v -> new AlertDialog.Builder(getContext())
 				.setMessage("Are you sure you want to delete this pin?")
-				.setPositiveButton("Yes", (dialog, which) ->
-						realm.executeTransaction(r -> r
-								.where(Pin.class)
-								.equalTo("id", id)
-								.findFirst()
-								.deleteFromRealm()))
+				.setPositiveButton("Yes", (dialog, which) -> {
+					realm.executeTransaction(r -> r
+							.where(Pin.class)
+							.equalTo("id", id)
+							.findFirst()
+							.deleteFromRealm());
+					getFragmentManager().popBackStack();
+				})
 				.setNegativeButton("No", (dialog, which) -> dialog.cancel())
 				.create()
 				.show()
