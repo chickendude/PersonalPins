@@ -1,14 +1,20 @@
 package ch.ralena.personalpins.objects;
 
 import java.util.List;
+import java.util.UUID;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
+import io.realm.annotations.PrimaryKey;
 
 public class Pin extends RealmObject {
 	public static final String TYPE_VIDEO = "video";
 	public static final String TYPE_PICTURE = "picture";
 
+	@PrimaryKey
+	@Index
+	private String id = UUID.randomUUID().toString();;
 	private String title;
 	private String type;
 	private String note;
@@ -17,6 +23,10 @@ public class Pin extends RealmObject {
 
 	public Pin() {
 		super();
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public String getTitle() {

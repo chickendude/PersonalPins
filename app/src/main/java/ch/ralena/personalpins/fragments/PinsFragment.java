@@ -43,6 +43,7 @@ public class PinsFragment extends Fragment {
 	private static final int REQUEST_CHOOSE_VIDEO = 3;
 	public static final String EXTRA_FILEPATH = "extra_filepath";
 	public static final String EXTRA_FILETYPE = "extra_filetype";
+	public static final String EXTRA_PIN_ID = "extra_pin_id";
 
 	private MainActivity mainActivity;
 	private Realm realm;
@@ -65,8 +66,8 @@ public class PinsFragment extends Fragment {
 
 
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-
 		adapter = new PinsAdapter(pins);
+		adapter.asObservable().subscribe(this::loadPinDetail);
 		recyclerView.setAdapter(adapter);
 		recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
@@ -143,7 +144,7 @@ public class PinsFragment extends Fragment {
 
 	private void takeVideo() {
 		mediaUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
-		if (mediaUri==null) {
+		if (mediaUri == null) {
 			Toast.makeText(mainActivity,
 					"There was a problem accessing your device's external storage.",
 					Toast.LENGTH_LONG)
@@ -229,6 +230,18 @@ public class PinsFragment extends Fragment {
 		} else {
 			return false;
 		}
+	}
+
+	private void loadPinDetail(Pin pin) {
+		PinDetailFragment pinDetailFragment = new PinDetailFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString(EXTRA_PIN_ID, pin.getId());
+		pinDetailFragment.setArguments(bundle);
+		getFragmentManager()
+				.beginTransaction()
+				.replace(R.id.frameContainer, pinDetailFragment)
+				.addToBackStack(null)
+				.commit();
 	}
 
 	@Override

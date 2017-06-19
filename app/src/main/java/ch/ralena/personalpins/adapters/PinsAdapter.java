@@ -2,7 +2,6 @@ package ch.ralena.personalpins.adapters;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +17,15 @@ import java.util.List;
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.objects.Pin;
 import ch.ralena.personalpins.objects.Tag;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 	private static final int TYPE_PIN = 0;
 	private static final int TYPE_NEW = 1;
+
+
+	private final PublishSubject<Pin> onClickSubject = PublishSubject.create();
 
 
 	private static final String TAG = PinsAdapter.class.getSimpleName();
@@ -75,7 +79,13 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		}
 
 		public void bindView(Pin pin) {
-			Log.d(TAG, "" + pin.getFilepath());
+			itemView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onClickSubject.onNext(pin);
+				}
+			});
+
 			if (pin.getFilepath() != null) {
 				if (pin.getType().equals("photo")) {
 					thumbnailImage.setVisibility(View.VISIBLE);
@@ -112,4 +122,9 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			super(itemView);
 		}
 	}
+
+	public Observable<Pin> asObservable() {
+		return onClickSubject;
+	}
+
 }

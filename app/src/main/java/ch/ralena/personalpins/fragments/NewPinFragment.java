@@ -29,6 +29,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import ch.ralena.personalpins.FullScreenImageActivity;
 import ch.ralena.personalpins.FullScreenVideoActivity;
@@ -185,7 +186,7 @@ public class NewPinFragment extends Fragment {
 		if (item.getItemId() == R.id.actionConfirm) {
 			if (tagTitle.getText().toString().trim().length() > 0) {
 				realm.executeTransaction(r -> {
-					Pin pin = r.createObject(Pin.class);
+					Pin pin = r.createObject(Pin.class, UUID.randomUUID().toString());
 					pin.setTitle(tagTitle.getText().toString());
 					pin.setNote(tagNote.getText().toString());
 					pin.setFilepath(filepath);
