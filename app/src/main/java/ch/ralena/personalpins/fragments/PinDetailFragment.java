@@ -1,16 +1,23 @@
 package ch.ralena.personalpins.fragments;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
+
+import com.squareup.picasso.Picasso;
 
 import ch.ralena.personalpins.MainActivity;
 import ch.ralena.personalpins.R;
@@ -25,6 +32,9 @@ public class PinDetailFragment extends Fragment {
 	private Pin pin;
 	private MainActivity mainActivity;
 	private LinearLayout tagLayout;
+	private ImageView thumbnailPhoto;
+	private VideoView thumbnailVideo;
+	private ImageView thumbnailVideoPlay;
 	private TextView titleText, noteText;
 	private Button deleteButton;
 
@@ -45,6 +55,52 @@ public class PinDetailFragment extends Fragment {
 		titleText = (TextView) view.findViewById(R.id.titleText);
 		noteText = (TextView) view.findViewById(R.id.noteText);
 		deleteButton = (Button) view.findViewById(R.id.deleteButton);
+		thumbnailPhoto = (ImageView) view.findViewById(R.id.thumbnailPhoto);
+		thumbnailVideo = (VideoView) view.findViewById(R.id.thumbnailVideo);
+		thumbnailVideoPlay = (ImageView) view.findViewById(R.id.thumbnailVideoPlay);
+
+		titleText.setText(pin.getTitle());
+		noteText.setText(pin.getNote());
+
+		setupDeleteButton(id);
+		loadTags();
+		loadThumbnail();
+
+		return view;
+	}
+
+	private void loadThumbnail() {
+		if (pin.getType().equals("video")) {
+			thumbnailVideo.setVisibility(View.VISIBLE);
+			thumbnailVideoPlay.setVisibility(View.VISIBLE);
+			thumbnailVideo.setVideoURI(Uri.parse(pin.getFilepath()));
+
+			// set up media controller
+			MediaController mediaController = new MediaController(getContext());
+			mediaController.setAnchorView(thumbnailVideo);
+			thumbnailVideo.setMediaController(mediaController);
+
+			thumbnailVideo.setOnTouchListener((v, event) -> {
+				if (event.getAction()== MotionEvent.ACTION_DOWN) {
+					thumbnailVideoPlay.setVisibility(View.INVISIBLE);
+					thumbnailVideo.start();
+					return true;
+				}
+				return false;
+			});
+			thumbnailVideo.setOnCompletionListener(mp -> thumbnailVideoPlay.setVisibility(View.VISIBLE));
+		} else if (pin.getType().equals("photo")) {
+			thumbnailPhoto.setVisibility(View.VISIBLE);
+			Picasso.with(getContext())
+					.load(pin.getFilepath())
+					.fit()
+					.centerCrop()
+					.into(thumbnailPhoto);
+		}
+
+	}
+
+	private void setupDeleteButton(String id) {
 		deleteButton.setOnClickListener(v -> new AlertDialog.Builder(getContext())
 				.setMessage("Are you sure you want to delete this pin?")
 				.setPositiveButton("Yes", (dialog, which) -> {
@@ -59,13 +115,6 @@ public class PinDetailFragment extends Fragment {
 				.create()
 				.show()
 		);
-
-		titleText.setText(pin.getTitle());
-		noteText.setText(pin.getNote());
-
-		loadTags();
-
-		return view;
 	}
 
 	@Override

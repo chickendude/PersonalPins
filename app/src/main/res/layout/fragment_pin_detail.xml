@@ -5,24 +5,38 @@
 				android:layout_height="match_parent"
 				android:orientation="vertical">
 
-	<ImageView
-		android:id="@+id/thumbnailPhoto"
-		android:layout_width="match_parent"
-		android:layout_height="300dp"
-		android:visibility="invisible"/>
+	<RelativeLayout
+		android:id="@+id/thumbnailLayout"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
 
-	<VideoView
-		android:id="@+id/thumbnailVideo"
-		android:layout_width="match_parent"
-		android:layout_height="300dp"
-		android:visibility="invisible"/>
+		<ImageView
+			android:id="@+id/thumbnailPhoto"
+			android:layout_width="match_parent"
+			android:layout_height="300dp"
+			android:visibility="invisible"/>
+
+		<VideoView
+			android:id="@+id/thumbnailVideo"
+			android:layout_width="match_parent"
+			android:layout_height="300dp"
+			android:visibility="invisible"/>
+
+		<ImageView
+			android:id="@+id/thumbnailVideoPlay"
+			android:visibility="invisible"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:src="@drawable/play"/>
+	</RelativeLayout>
 
 	<ScrollView
-		android:layout_marginLeft="8dp"
-		android:layout_marginRight="8dp"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_below="@id/thumbnailPhoto">
+		android:layout_below="@id/thumbnailLayout"
+		android:layout_marginLeft="8dp"
+		android:layout_marginRight="8dp">
 
 		<RelativeLayout
 			android:layout_width="match_parent"
@@ -45,10 +59,10 @@
 
 			<HorizontalScrollView
 				android:id="@+id/horizontalScrollView"
-				android:layout_marginBottom="10dp"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_below="@id/noteText"
+				android:layout_marginBottom="10dp"
 				android:scrollbars="none">
 
 				<LinearLayout
