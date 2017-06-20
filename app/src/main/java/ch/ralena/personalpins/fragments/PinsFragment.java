@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,10 +65,10 @@ public class PinsFragment extends Fragment {
 		// initialize pins
 		pins = realm.where(Pin.class).findAll();
 
-
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 		adapter = new PinsAdapter(pins);
-		adapter.asObservable().subscribe(this::loadPinDetail);
+		adapter.asPinObservable().subscribe(this::loadPinDetail);
+		adapter.asNewObservable().subscribe(this::newPinMenu);
 		recyclerView.setAdapter(adapter);
 		recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
@@ -242,6 +243,13 @@ public class PinsFragment extends Fragment {
 				.replace(R.id.frameContainer, pinDetailFragment)
 				.addToBackStack(null)
 				.commit();
+	}
+
+	private void newPinMenu(View view) {
+		PopupMenu menu = new PopupMenu(mainActivity, view);
+		menu.getMenuInflater().inflate(R.menu.pins, menu.getMenu());
+		menu.setOnMenuItemClickListener(this::onOptionsItemSelected);
+		menu.show();
 	}
 
 	@Override

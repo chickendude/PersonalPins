@@ -26,6 +26,7 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
 	private final PublishSubject<Pin> onClickSubject = PublishSubject.create();
+	private final PublishSubject<View> onNewClickSubject = PublishSubject.create();
 
 
 	private static final String TAG = PinsAdapter.class.getSimpleName();
@@ -79,12 +80,7 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		}
 
 		public void bindView(Pin pin) {
-			itemView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					onClickSubject.onNext(pin);
-				}
-			});
+			itemView.setOnClickListener(v -> onClickSubject.onNext(pin));
 
 			if (pin.getFilepath() != null) {
 				if (pin.getType().equals("photo")) {
@@ -120,11 +116,15 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 	private class ViewHolderNew extends RecyclerView.ViewHolder {
 		public ViewHolderNew(View itemView) {
 			super(itemView);
+			itemView.setOnClickListener(v -> onNewClickSubject.onNext(itemView));
 		}
 	}
 
-	public Observable<Pin> asObservable() {
+	public Observable<Pin> asPinObservable() {
 		return onClickSubject;
+	}
+	public Observable<View> asNewObservable() {
+		return onNewClickSubject;
 	}
 
 }
