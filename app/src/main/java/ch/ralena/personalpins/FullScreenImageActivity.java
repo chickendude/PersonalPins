@@ -5,9 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
-import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 
@@ -22,12 +20,7 @@ public class FullScreenImageActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_full_screen_image);
 
 		PhotoView image = (PhotoView) findViewById(R.id.image);
-		image.setOnPhotoTapListener(new OnPhotoTapListener() {
-			@Override
-			public void onPhotoTap(ImageView view, float x, float y) {
-				finish();
-			}
-		});
+		image.setOnPhotoTapListener((view, x, y) -> finish());
 
 		String imageUri = getIntent().getStringExtra(EXTRA_IMAGE_URI);
 		Picasso.with(this)

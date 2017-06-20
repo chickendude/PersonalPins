@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -83,7 +85,7 @@ public class PinDetailFragment extends Fragment {
 			thumbnailVideo.setMediaController(mediaController);
 
 			thumbnailVideo.setOnTouchListener((v, event) -> {
-				if (event.getAction()== MotionEvent.ACTION_DOWN) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					thumbnailVideoPlay.setVisibility(View.INVISIBLE);
 					thumbnailVideo.start();
 					return true;
@@ -95,7 +97,13 @@ public class PinDetailFragment extends Fragment {
 			thumbnailPhoto.setOnClickListener(v -> {
 				Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
 				intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, pin.getFilepath());
-				startActivity(intent);
+
+				ActivityOptionsCompat options =
+						ActivityOptionsCompat.makeSceneTransitionAnimation(
+								getActivity(),
+								thumbnailPhoto,
+								getString(R.string.image_transition));
+				ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 			});
 			thumbnailPhoto.setVisibility(View.VISIBLE);
 			Picasso.with(getContext())
