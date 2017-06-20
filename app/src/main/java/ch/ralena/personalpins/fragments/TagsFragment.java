@@ -1,17 +1,19 @@
 package ch.ralena.personalpins.fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class TagsFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_tags, container, false);
 		setHasOptionsMenu(true);
 
-		tags = realm.where(Tag.class).findAll();
+		tags = realm.where(Tag.class).findAllSorted("title");
 
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
@@ -69,16 +71,33 @@ public class TagsFragment extends Fragment {
 		switch (item.getItemId()) {
 			case R.id.actionAddTag:
 				addTag();
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
 	private void addTag() {
-		realm.executeTransaction(r -> {
-			Log.d(TAG, "added tag, num tags = " + tags.size());
-			Tag tag = r.createObject(Tag.class);
-			tag.setTitle("Tag #" + tags.size());
-			adapter.notifyDataSetChanged();
-		});
+		EditText tagNameEdit = new EditText(getContext());
+		tagNameEdit.setHint("Tag Name");
+		new AlertDialog.Builder(getContext())
+				.setTitle("Add New Tag")
+				.setView(tagNameEdit)
+				.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						realm.executeTransaction(r -> {
+							boolean tagExists = false;
+							for (Tag tag : tags) {
+								tagExists |= tag.getTitle().equals(tagNameEdit.getText().toString());
+							}
+							if (!tagExists) {
+								r.createObject(Tag.class, tagNameEdit.getText().toString());
+								adapter.notifyDataSetChanged();
+							}
+						});
+					}
+				})
+				.create()
+				.show();
 	}
 }
