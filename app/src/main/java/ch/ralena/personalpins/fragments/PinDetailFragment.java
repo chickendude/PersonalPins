@@ -1,6 +1,7 @@
 package ch.ralena.personalpins.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
+import ch.ralena.personalpins.FullScreenImageActivity;
 import ch.ralena.personalpins.MainActivity;
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.objects.Pin;
@@ -90,6 +92,11 @@ public class PinDetailFragment extends Fragment {
 			});
 			thumbnailVideo.setOnCompletionListener(mp -> thumbnailVideoPlay.setVisibility(View.VISIBLE));
 		} else if (pin.getType().equals("photo")) {
+			thumbnailPhoto.setOnClickListener(v -> {
+				Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
+				intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, pin.getFilepath());
+				startActivity(intent);
+			});
 			thumbnailPhoto.setVisibility(View.VISIBLE);
 			Picasso.with(getContext())
 					.load(pin.getFilepath())
