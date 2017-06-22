@@ -66,7 +66,7 @@ public class PinsFragment extends Fragment {
 		pins = realm.where(Pin.class).findAll();
 
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-		adapter = new PinsAdapter(pins);
+		adapter = new PinsAdapter(pins, true);
 		adapter.asPinObservable().subscribe(this::loadPinDetail);
 		adapter.asNewObservable().subscribe(this::newPinMenu);
 		recyclerView.setAdapter(adapter);

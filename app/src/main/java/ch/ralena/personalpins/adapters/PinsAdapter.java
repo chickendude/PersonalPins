@@ -31,9 +31,11 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	private static final String TAG = PinsAdapter.class.getSimpleName();
 	List<Pin> pins;
+	private boolean hasNewButton;
 
-	public PinsAdapter(List<Pin> pins) {
+	public PinsAdapter(List<Pin> pins, boolean hasNewButton) {
 		this.pins = pins;
+		this.hasNewButton = hasNewButton;
 	}
 
 	@Override
@@ -55,7 +57,7 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	@Override
 	public int getItemCount() {
-		return pins.size() + 1;
+		return hasNewButton ? pins.size() + 1 : pins.size();
 	}
 
 	@Override

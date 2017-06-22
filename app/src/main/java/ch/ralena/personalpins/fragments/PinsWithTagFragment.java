@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.ralena.personalpins.R;
-import ch.ralena.personalpins.adapters.PinsWithTagAdapter;
+import ch.ralena.personalpins.adapters.PinsAdapter;
 import ch.ralena.personalpins.objects.Pin;
 import ch.ralena.personalpins.objects.Tag;
 import io.realm.Realm;
@@ -39,7 +39,7 @@ public class PinsWithTagFragment extends Fragment {
 				pins.add(pin);
 		}
 
-		PinsWithTagAdapter adapter = new PinsWithTagAdapter(pins);
+		PinsAdapter adapter = new PinsAdapter(pins, false);
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 		recyclerView.setAdapter(adapter);
 		recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
