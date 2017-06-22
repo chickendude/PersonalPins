@@ -24,6 +24,7 @@ import io.realm.Realm;
 
 public class TagsFragment extends Fragment {
 	private static final String TAG = TagsFragment.class.getSimpleName();
+	public static final String EXTRA_TAG_TITLE = "extra_tag_title";
 
 	private Realm realm;
 	private List<Tag> tags;
@@ -42,6 +43,8 @@ public class TagsFragment extends Fragment {
 		adapter = new TagsAdapter(tags);
 		recyclerView.setAdapter(adapter);
 		recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+		adapter.asObservable().subscribe(this::loadPinWithTag);
 
 		return view;
 	}
@@ -74,6 +77,18 @@ public class TagsFragment extends Fragment {
 				break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void loadPinWithTag(Tag tag) {
+		PinsWithTagFragment fragment = new PinsWithTagFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString(EXTRA_TAG_TITLE, tag.getTitle());
+		fragment.setArguments(bundle);
+
+		getFragmentManager().beginTransaction()
+				.addToBackStack(null)
+				.replace(R.id.frameContainer, fragment)
+				.commit();
 	}
 
 	private void addTag() {
