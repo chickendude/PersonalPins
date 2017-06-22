@@ -20,6 +20,8 @@ import ch.ralena.personalpins.objects.Pin;
 import ch.ralena.personalpins.objects.Tag;
 import io.realm.Realm;
 
+import static ch.ralena.personalpins.fragments.PinsFragment.EXTRA_PIN_ID;
+
 public class PinsWithTagFragment extends Fragment {
 	private Realm realm;
 	private MainActivity mainActivity;
@@ -52,6 +54,7 @@ public class PinsWithTagFragment extends Fragment {
 		}
 
 		PinsAdapter adapter = new PinsAdapter(pins, false);
+		adapter.asPinObservable().subscribe(this::loadPinDetail);
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 		recyclerView.setAdapter(adapter);
 		recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -65,4 +68,17 @@ public class PinsWithTagFragment extends Fragment {
 		toolbar.setTitle("Personal Pins");
 		toolbar.setDisplayHomeAsUpEnabled(false);
 	}
+
+	private void loadPinDetail(Pin pin) {
+		PinDetailFragment pinDetailFragment = new PinDetailFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString(EXTRA_PIN_ID, pin.getId());
+		pinDetailFragment.setArguments(bundle);
+		getFragmentManager()
+				.beginTransaction()
+				.replace(R.id.frameContainer, pinDetailFragment)
+				.addToBackStack(null)
+				.commit();
+	}
+
 }
