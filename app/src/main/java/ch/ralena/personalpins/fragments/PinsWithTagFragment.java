@@ -3,6 +3,7 @@ package ch.ralena.personalpins.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.ralena.personalpins.MainActivity;
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.adapters.PinsAdapter;
 import ch.ralena.personalpins.objects.Pin;
@@ -20,15 +22,25 @@ import io.realm.Realm;
 
 public class PinsWithTagFragment extends Fragment {
 	private Realm realm;
+	private MainActivity mainActivity;
+	private ActionBar toolbar;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		// get tag title
+		realm = Realm.getDefaultInstance();
+		String tagTitle = getArguments().getString(TagsFragment.EXTRA_TAG_TITLE);
+
+		mainActivity = (MainActivity) getActivity();
+		toolbar = mainActivity.getSupportActionBar();
+		if (toolbar != null) {
+			toolbar.setDisplayHomeAsUpEnabled(true);
+			toolbar.setTitle("Pins tagged with '" + tagTitle + "'");
+		}
+
 		View view = inflater.inflate(R.layout.fragment_pins_with_tag, container, false);
 
-		realm = Realm.getDefaultInstance();
-
-		String tagTitle = getArguments().getString(TagsFragment.EXTRA_TAG_TITLE);
 		Tag tag = realm.where(Tag.class).equalTo("title", tagTitle).findFirst();
 
 		List<Pin> allPins = realm.where(Pin.class).findAll();
@@ -45,5 +57,12 @@ public class PinsWithTagFragment extends Fragment {
 		recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
 		return view;
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		toolbar.setTitle("Personal Pins");
+		toolbar.setDisplayHomeAsUpEnabled(false);
 	}
 }
