@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.ralena.personalpins.R;
@@ -28,7 +32,9 @@ public class TagsFragment extends Fragment {
 
 	private Realm realm;
 	private List<Tag> tags;
+	private List<Tag> allTags;
 	private TagsAdapter adapter;
+	private EditText searchTags;
 
 	@Nullable
 	@Override
@@ -36,7 +42,34 @@ public class TagsFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_tags, container, false);
 		setHasOptionsMenu(true);
 
-		tags = realm.where(Tag.class).findAllSorted("title");
+		searchTags = (EditText) view.findViewById(R.id.editText);
+		searchTags.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				Log.d("TAG", "beforeTextChanged");
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				Log.d("TAG", "onTextChanged: " + s);
+				tags.removeIf(tag -> !tag.getTitle().contains(s));
+				for (Tag tag : allTags) {
+					if(tag.getTitle().contains(s) && !tags.contains(tag)) {
+						tags.add(tag);
+					}
+				}
+				adapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				Log.d("TAG", "afterTextChanged");
+			}
+		});
+
+		allTags = realm.where(Tag.class).findAllSorted("title");
+		tags = new ArrayList<>(allTags);
 
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
