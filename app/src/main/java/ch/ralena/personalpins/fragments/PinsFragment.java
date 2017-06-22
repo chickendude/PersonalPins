@@ -11,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,12 +20,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -48,8 +53,10 @@ public class PinsFragment extends Fragment {
 
 	private MainActivity mainActivity;
 	private Realm realm;
+	private List<Pin> allPins;
 	private List<Pin> pins;
 	private Uri mediaUri;
+	private EditText searchPins;
 
 	private PinsAdapter adapter;
 
@@ -60,10 +67,35 @@ public class PinsFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_pins, container, false);
 		setHasOptionsMenu(true);
 
+		searchPins = (EditText) view.findViewById(R.id.editText);
+		searchPins.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				String searchText = s.toString().toLowerCase();
+				pins.removeIf(tag -> !tag.getTitle().toLowerCase().contains(searchText));
+				for (Pin pin : allPins) {
+					if(pin.getTitle().toLowerCase().contains(searchText) && !pins.contains(pin)) {
+						pins.add(pin);
+					}
+				}
+				// make sure we're still in alphabetical order
+				Collections.sort(pins, (o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
+				adapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {}
+		});
+
+
 		mainActivity = (MainActivity) getActivity();
 
 		// initialize pins
-		pins = realm.where(Pin.class).findAll();
+		allPins = realm.where(Pin.class).findAll();
+		pins = new ArrayList<>(allPins);
 
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 		adapter = new PinsAdapter(pins, true);

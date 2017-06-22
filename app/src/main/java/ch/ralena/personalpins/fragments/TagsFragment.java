@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ch.ralena.personalpins.R;
@@ -45,27 +45,24 @@ public class TagsFragment extends Fragment {
 		searchTags = (EditText) view.findViewById(R.id.editText);
 		searchTags.addTextChangedListener(new TextWatcher() {
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				Log.d("TAG", "beforeTextChanged");
-
-			}
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				Log.d("TAG", "onTextChanged: " + s);
-				tags.removeIf(tag -> !tag.getTitle().contains(s));
+				String searchText = s.toString().toLowerCase();
+				tags.removeIf(tag -> !tag.getTitle().toLowerCase().contains(searchText));
 				for (Tag tag : allTags) {
-					if(tag.getTitle().contains(s) && !tags.contains(tag)) {
+					if(tag.getTitle().toLowerCase().contains(searchText) && !tags.contains(tag)) {
 						tags.add(tag);
 					}
 				}
+				// make sure we're still in alphabetical order
+				Collections.sort(tags, (o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
 				adapter.notifyDataSetChanged();
 			}
 
 			@Override
-			public void afterTextChanged(Editable s) {
-				Log.d("TAG", "afterTextChanged");
-			}
+			public void afterTextChanged(Editable s) {}
 		});
 
 		allTags = realm.where(Tag.class).findAllSorted("title");

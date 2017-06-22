@@ -68,4 +68,9 @@ public class Pin extends RealmObject {
 	public void setFilepath(String filepath) {
 		this.filepath = filepath;
 	}
+
+	@Override
+	public String toString() {
+		return title;
+	}
 }
