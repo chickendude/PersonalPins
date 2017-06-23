@@ -9,10 +9,17 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.transition.ChangeBounds;
+import android.transition.ChangeImageTransform;
+import android.transition.ChangeTransform;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.TransitionSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -70,14 +77,15 @@ public class PinsFragment extends Fragment {
 		searchPins = (EditText) view.findViewById(R.id.editText);
 		searchPins.addTextChangedListener(new TextWatcher() {
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				String searchText = s.toString().toLowerCase();
 				pins.removeIf(tag -> !tag.getTitle().toLowerCase().contains(searchText));
 				for (Pin pin : allPins) {
-					if(pin.getTitle().toLowerCase().contains(searchText) && !pins.contains(pin)) {
+					if (pin.getTitle().toLowerCase().contains(searchText) && !pins.contains(pin)) {
 						pins.add(pin);
 					}
 				}
@@ -87,7 +95,8 @@ public class PinsFragment extends Fragment {
 			}
 
 			@Override
-			public void afterTextChanged(Editable s) {}
+			public void afterTextChanged(Editable s) {
+			}
 		});
 
 
@@ -265,13 +274,34 @@ public class PinsFragment extends Fragment {
 		}
 	}
 
-	private void loadPinDetail(Pin pin) {
+	private void loadPinDetail(PinsAdapter.PinView pinView) {
+		View view = pinView.getView();
+		Pin pin = pinView.getPin();
+
+		view.setTransitionName(getString(R.string.image_transition));
+
+		Log.d(TAG, view.getTransitionName());
+
 		PinDetailFragment pinDetailFragment = new PinDetailFragment();
+
+		TransitionSet transitionSet = new TransitionSet();
+		transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER)
+				.addTransition(new ChangeBounds())
+				.addTransition(new ChangeTransform())
+				.addTransition(new ChangeImageTransform());
+
+		pinDetailFragment.setSharedElementEnterTransition(transitionSet);
+		pinDetailFragment.setSharedElementReturnTransition(new Fade());
+		pinDetailFragment.setEnterTransition(new Explode());
+		pinDetailFragment.setExitTransition(new Fade());
+		setReenterTransition(new Explode());
+
 		Bundle bundle = new Bundle();
 		bundle.putString(EXTRA_PIN_ID, pin.getId());
 		pinDetailFragment.setArguments(bundle);
 		getFragmentManager()
 				.beginTransaction()
+				.addSharedElement(view, ViewCompat.getTransitionName(view))
 				.replace(R.id.frameContainer, pinDetailFragment)
 				.addToBackStack(null)
 				.commit();

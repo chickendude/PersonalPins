@@ -69,7 +69,8 @@ public class PinsWithTagFragment extends Fragment {
 		toolbar.setDisplayHomeAsUpEnabled(false);
 	}
 
-	private void loadPinDetail(Pin pin) {
+	private void loadPinDetail(PinsAdapter.PinView pinView) {
+		Pin pin = pinView.getPin();
 		PinDetailFragment pinDetailFragment = new PinDetailFragment();
 		Bundle bundle = new Bundle();
 		bundle.putString(EXTRA_PIN_ID, pin.getId());

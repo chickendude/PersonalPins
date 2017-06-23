@@ -21,15 +21,15 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
 public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+	private static final String TAG = PinsAdapter.class.getSimpleName();
 	private static final int TYPE_PIN = 0;
 	private static final int TYPE_NEW = 1;
 
 
-	private final PublishSubject<Pin> onClickSubject = PublishSubject.create();
+	private final PublishSubject<PinView> onClickSubject = PublishSubject.create();
 	private final PublishSubject<View> onNewClickSubject = PublishSubject.create();
 
 
-	private static final String TAG = PinsAdapter.class.getSimpleName();
 	List<Pin> pins;
 	private boolean hasNewButton;
 
@@ -82,7 +82,7 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		}
 
 		public void bindView(Pin pin) {
-			itemView.setOnClickListener(v -> onClickSubject.onNext(pin));
+			itemView.setOnClickListener(v -> onClickSubject.onNext(new PinView(pin, thumbnailImage)));
 
 			if (pin.getFilepath() != null) {
 				if (pin.getType().equals("photo")) {
@@ -122,11 +122,29 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		}
 	}
 
-	public Observable<Pin> asPinObservable() {
+	public Observable<PinView> asPinObservable() {
 		return onClickSubject;
 	}
 	public Observable<View> asNewObservable() {
 		return onNewClickSubject;
+	}
+
+	public class PinView {
+		private Pin pin;
+		private View view;
+
+		public PinView(Pin pin, View view) {
+			this.pin = pin;
+			this.view = view;
+		}
+
+		public Pin getPin() {
+			return pin;
+		}
+
+		public View getView() {
+			return view;
+		}
 	}
 
 }
