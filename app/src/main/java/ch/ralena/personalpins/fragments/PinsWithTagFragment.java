@@ -3,9 +3,16 @@ package ch.ralena.personalpins.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.ChangeBounds;
+import android.transition.ChangeImageTransform;
+import android.transition.ChangeTransform;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.TransitionSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,13 +77,32 @@ public class PinsWithTagFragment extends Fragment {
 	}
 
 	private void loadPinDetail(PinsAdapter.PinView pinView) {
+		View view = pinView.getView();
 		Pin pin = pinView.getPin();
+		view.setTransitionName(getString(R.string.image_transition));
+
 		PinDetailFragment pinDetailFragment = new PinDetailFragment();
+
+		// transitions
+		TransitionSet transitionSet = new TransitionSet();
+		transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER)
+				.addTransition(new ChangeBounds())
+				.addTransition(new ChangeTransform())
+				.addTransition(new ChangeImageTransform());
+
+		pinDetailFragment.setSharedElementEnterTransition(transitionSet);
+		pinDetailFragment.setSharedElementReturnTransition(new Fade());
+		pinDetailFragment.setEnterTransition(new Explode());
+		pinDetailFragment.setExitTransition(new Fade());
+		setReenterTransition(new Explode());
+
+		// load bundle/fragment
 		Bundle bundle = new Bundle();
 		bundle.putString(EXTRA_PIN_ID, pin.getId());
 		pinDetailFragment.setArguments(bundle);
 		getFragmentManager()
 				.beginTransaction()
+				.addSharedElement(view, ViewCompat.getTransitionName(view))
 				.replace(R.id.frameContainer, pinDetailFragment)
 				.addToBackStack(null)
 				.commit();

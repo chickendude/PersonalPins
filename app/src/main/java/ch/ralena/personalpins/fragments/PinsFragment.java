@@ -277,25 +277,26 @@ public class PinsFragment extends Fragment {
 	private void loadPinDetail(PinsAdapter.PinView pinView) {
 		View view = pinView.getView();
 		Pin pin = pinView.getPin();
-
 		view.setTransitionName(getString(R.string.image_transition));
 
-		Log.d(TAG, view.getTransitionName());
-
+		// create fragment
 		PinDetailFragment pinDetailFragment = new PinDetailFragment();
 
+		// set up transitions
 		TransitionSet transitionSet = new TransitionSet();
 		transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER)
 				.addTransition(new ChangeBounds())
 				.addTransition(new ChangeTransform())
 				.addTransition(new ChangeImageTransform());
 
+		// attach transitions to fragments
 		pinDetailFragment.setSharedElementEnterTransition(transitionSet);
 		pinDetailFragment.setSharedElementReturnTransition(new Fade());
 		pinDetailFragment.setEnterTransition(new Explode());
 		pinDetailFragment.setExitTransition(new Fade());
 		setReenterTransition(new Explode());
 
+		// create bundle and load fragment
 		Bundle bundle = new Bundle();
 		bundle.putString(EXTRA_PIN_ID, pin.getId());
 		pinDetailFragment.setArguments(bundle);
