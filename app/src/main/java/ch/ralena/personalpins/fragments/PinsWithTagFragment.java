@@ -71,9 +71,9 @@ public class PinsWithTagFragment extends Fragment {
 
 	@Override
 	public void onDestroyView() {
-		super.onDestroyView();
 		toolbar.setTitle("Personal Pins");
 		toolbar.setDisplayHomeAsUpEnabled(false);
+		super.onDestroyView();
 	}
 
 	private void loadPinDetail(PinsAdapter.PinView pinView) {

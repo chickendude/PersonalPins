@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 		fragmentManager = getSupportFragmentManager();
 		bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
 		bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+			fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 			switch (item.getItemId()) {
 				case R.id.actionBoard:
 					replaceFragment(new BoardFragment());

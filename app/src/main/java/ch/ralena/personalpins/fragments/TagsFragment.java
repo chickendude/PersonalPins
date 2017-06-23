@@ -29,6 +29,7 @@ import io.realm.Realm;
 public class TagsFragment extends Fragment {
 	private static final String TAG = TagsFragment.class.getSimpleName();
 	public static final String EXTRA_TAG_TITLE = "extra_tag_title";
+	public static final String BACKSTACK_PINSWITHTAG = "backstack_pinswithtag";
 
 	private Realm realm;
 	private List<Tag> tags;
@@ -116,7 +117,7 @@ public class TagsFragment extends Fragment {
 		fragment.setArguments(bundle);
 
 		getFragmentManager().beginTransaction()
-				.addToBackStack(null)
+				.addToBackStack(BACKSTACK_PINSWITHTAG)
 				.replace(R.id.frameContainer, fragment)
 				.commit();
 	}
