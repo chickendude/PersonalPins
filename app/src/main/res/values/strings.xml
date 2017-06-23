@@ -14,4 +14,6 @@
 	<string name="choose_picture">Choose Picture</string>
 	<string name="choose_video">Choose Video</string>
 	<string name="image_transition">imageTransition</string>
+	<string name="new_board">New Board</string>
+	<string name="new_tag">New Tag</string>
 </resources>

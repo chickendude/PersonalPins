@@ -103,7 +103,7 @@ public class PinsFragment extends Fragment {
 		mainActivity = (MainActivity) getActivity();
 
 		// initialize pins
-		allPins = realm.where(Pin.class).findAll();
+		allPins = realm.where(Pin.class).findAllSorted("title");
 		pins = new ArrayList<>(allPins);
 
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
