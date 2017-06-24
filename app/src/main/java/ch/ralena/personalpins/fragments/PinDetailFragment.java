@@ -136,6 +136,10 @@ public class PinDetailFragment extends Fragment {
 	public void onDestroyView() {
 		super.onDestroyView();
 		mainActivity.showActionBar();
+		if (realm != null) {
+			realm.close();
+			realm = null;
+		}
 	}
 
 	private void loadTags() {

@@ -205,5 +205,10 @@ public class NewPinFragment extends Fragment {
 	public void onDestroyView() {
 		super.onDestroyView();
 		toolbar.setDisplayHomeAsUpEnabled(false);
+		if (realm != null) {
+			realm.close();
+			realm = null;
+		}
+
 	}
 }

@@ -73,6 +73,10 @@ public class PinsWithTagFragment extends Fragment {
 	public void onDestroyView() {
 		toolbar.setTitle("Personal Pins");
 		toolbar.setDisplayHomeAsUpEnabled(false);
+		if (realm != null) {
+			realm.close();
+			realm = null;
+		}
 		super.onDestroyView();
 	}
 
