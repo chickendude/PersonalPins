@@ -1,0 +1,87 @@
+package ch.ralena.personalpins.fragments;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+
+import java.util.List;
+
+import ch.ralena.personalpins.MainActivity;
+import ch.ralena.personalpins.R;
+import ch.ralena.personalpins.adapters.ChoosePinsAdapter;
+import ch.ralena.personalpins.objects.Pin;
+import io.realm.Realm;
+
+public class ChoosePinsFragment extends Fragment {
+	private MainActivity mainActivity;
+
+	// views
+	private ActionBar toolbar;
+
+	private Realm realm;
+	private List<Pin> pins;
+
+
+	@Nullable
+	@Override
+	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		realm = Realm.getDefaultInstance();
+		pins = realm.where(Pin.class).findAllSorted("title");
+
+		// set up toolbar
+		mainActivity = (MainActivity) getActivity();
+		mainActivity.showActionBar();    // make sure action bar is fully shown
+		mainActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		toolbar = mainActivity.getSupportActionBar();
+		if (toolbar != null) {
+			toolbar.setDisplayHomeAsUpEnabled(true);
+			toolbar.setHideOnContentScrollEnabled(false);
+		}
+		setHasOptionsMenu(true);
+
+		// load views
+		View view = inflater.inflate(R.layout.fragment_choose_pins, container, false);
+
+		// setup recyclerview
+		ChoosePinsAdapter adapter = new ChoosePinsAdapter(pins);
+		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+		recyclerView.setAdapter(adapter);
+		recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
+
+		return view;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.ok, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.actionConfirm) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		toolbar.setDisplayHomeAsUpEnabled(false);
+		if (realm != null) {
+			realm.close();
+			realm = null;
+		}
+
+	}
+}

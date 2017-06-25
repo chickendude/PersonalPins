@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					xmlns:app="http://schemas.android.com/apk/res-auto"
+					xmlns:tools="http://schemas.android.com/tools"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:orientation="vertical">
+
+		<EditText
+			android:id="@+id/title"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@+id/thumbnailPhoto"
+			android:layout_alignTop="@+id/thumbnailPhoto"
+			android:layout_marginLeft="8dp"
+			android:layout_marginRight="8dp"
+			android:layout_toLeftOf="@+id/thumbnailPhoto"
+			android:background="@android:color/transparent"
+			android:drawableLeft="@drawable/ic_title"
+			android:drawablePadding="8dp"
+			android:hint="Image title"/>
+
+		<ImageView
+			android:id="@+id/thumbnailPhoto"
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_alignParentEnd="true"
+			android:layout_margin="12dp"
+			android:visibility="invisible"/>
+
+		<VideoView
+			android:id="@+id/thumbnailVideo"
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_alignParentEnd="true"
+			android:layout_margin="12dp"
+			android:visibility="invisible"/>
+
+		<View
+			android:id="@+id/div1"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_below="@id/thumbnailPhoto"
+			android:layout_margin="12dp"
+			android:background="@android:color/darker_gray"/>
+
+		<EditText
+			android:id="@+id/note"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/div1"
+			android:layout_margin="12dp"
+			android:background="@android:color/transparent"
+			android:drawableLeft="@drawable/ic_note"
+			android:drawablePadding="8dp"
+			android:gravity="bottom"
+			android:hint="Notes"/>
+
+		<View
+			android:id="@+id/div2"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_below="@id/note"
+			android:layout_margin="12dp"
+			android:layout_marginTop="18dp"
+			android:background="@android:color/darker_gray"/>
+
+		<AutoCompleteTextView
+			android:id="@+id/addTags"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/div2"
+			android:layout_marginLeft="12dp"
+			android:layout_marginRight="12dp"
+			android:background="@android:color/transparent"
+			android:completionThreshold="1"
+			android:drawableLeft="@drawable/tags"
+			android:drawablePadding="8dp"
+			android:hint="Add Tags"
+			android:imeActionLabel="Add"
+			android:imeOptions="actionSend"
+			android:inputType="textAutoComplete"
+			android:textSize="18sp"/>
+
+		<HorizontalScrollView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/addTags"
+			android:scrollbars="none">
+
+			<LinearLayout
+				android:id="@+id/tagLayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+			</LinearLayout>
+		</HorizontalScrollView>
+
+	</RelativeLayout>
+</ScrollView>

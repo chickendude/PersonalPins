@@ -43,6 +43,8 @@ public class BoardFragment extends Fragment {
 		recyclerView.setAdapter(adapter);
 		recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
+		adapter.asNewObservable().subscribe(this::createBoard);
+
 		return view;
 	}
 
@@ -70,14 +72,19 @@ public class BoardFragment extends Fragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.actionNewBoard:
-				addBoard();
+				createBoard(null);
 				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void addBoard() {
-
+	private void createBoard(View v) {
+		ChoosePinsFragment fragment = new ChoosePinsFragment();
+		getFragmentManager()
+				.beginTransaction()
+				.addToBackStack(null)
+				.replace(R.id.frameContainer, fragment)
+				.commit();
 	}
 
 

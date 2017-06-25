@@ -13,6 +13,8 @@ import java.util.List;
 
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.objects.Board;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 public class BoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -20,8 +22,19 @@ public class BoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 	private static final int TYPE_NEW = 1;
 	List<Board> boards;
 
+	PublishSubject<Board> onClickBoardSubject = PublishSubject.create();
+	PublishSubject<View> onClickNewSubject = PublishSubject.create();
+
 	public BoardAdapter(List<Board> boards) {
 		this.boards = boards;
+	}
+
+	public Observable<Board> asBoardObservable() {
+		return onClickBoardSubject;
+	}
+
+	public Observable<View> asNewObservable() {
+		return onClickNewSubject;
 	}
 
 	@Override
@@ -75,6 +88,12 @@ public class BoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 	private class ViewHolderNew extends RecyclerView.ViewHolder {
 		public ViewHolderNew(View view) {
 			super(view);
+			view.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onClickNewSubject.onNext(v);
+				}
+			});
 		}
 	}
 }
