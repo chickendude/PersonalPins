@@ -129,16 +129,15 @@ public class PinsFragment extends Fragment {
 			if (requestCode == REQUEST_CHOOSE_PICTURE || requestCode == REQUEST_TAKE_PHOTO) {
 				filetype = "photo";
 				if (requestCode==REQUEST_CHOOSE_PICTURE)
-					filepath = getRealPathFromURI(getContext(), data.getData());
+					filepath = getRealPathFromURI(getContext(), data.getData(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 				else
 					filepath = mediaPath;
 			} else if (requestCode == REQUEST_TAKE_VIDEO || requestCode == REQUEST_CHOOSE_VIDEO) {
 				filetype = "video";
-				if (data != null) {
-					filepath = getRealPathFromURI(getContext(), data.getData());
-				} else {
-					filepath = getRealPathFromURI(getContext(), mediaUri);
-				}
+				if( requestCode == REQUEST_CHOOSE_VIDEO)
+					filepath = getRealPathFromURI(getContext(), data.getData(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+				else
+					filepath = mediaPath;
 			}
 			if (!filepath.equals("")) {
 				createPin(filepath, filetype);
@@ -148,7 +147,7 @@ public class PinsFragment extends Fragment {
 		}
 	}
 
-	public static String getRealPathFromURI(Context context, Uri uri) {
+	public static String getRealPathFromURI(Context context, Uri uri, Uri uriType) {
 		String filePath = "";
 		String wholeID = DocumentsContract.getDocumentId(uri);
 
@@ -160,8 +159,9 @@ public class PinsFragment extends Fragment {
 		// where id is equal to
 		String sel = MediaStore.Images.Media._ID + "=?";
 
-		Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+		Cursor cursor = context.getContentResolver().query(uriType,
 				column, sel, new String[]{id}, null);
+
 
 		int columnIndex = cursor.getColumnIndex(column[0]);
 
@@ -228,13 +228,13 @@ public class PinsFragment extends Fragment {
 	}
 
 	private void choosePicture() {
-		Intent choosePhotoIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+		Intent choosePhotoIntent = new Intent(Intent.ACTION_GET_CONTENT);
 		choosePhotoIntent.setType("image/*");
 		startActivityForResult(choosePhotoIntent, REQUEST_CHOOSE_PICTURE);
 	}
 
 	private void chooseVideo() {
-		Intent chooseVideoIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+		Intent chooseVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
 		chooseVideoIntent.setType("video/*");
 		startActivityForResult(chooseVideoIntent, REQUEST_CHOOSE_VIDEO);
 	}
