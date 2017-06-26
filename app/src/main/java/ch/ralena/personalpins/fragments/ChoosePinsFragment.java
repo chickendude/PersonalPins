@@ -43,8 +43,6 @@ public class ChoosePinsFragment extends Fragment {
 	private List<Pin> pins;
 	private List<Pin> checkedPins;    // the list of currently checked pins
 
-	private View rootView;
-
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,21 +60,23 @@ public class ChoosePinsFragment extends Fragment {
 		}
 		setHasOptionsMenu(true);
 
-		// if we are returning from the pin detail fragment, rootview won't be null
-		if (rootView == null) {
+
+		// if we are returning from the pin detail fragment, our data is already initialized
+		if (checkedPins == null) {
 			checkedPins = new ArrayList<>();
-			// load views
-			rootView = inflater.inflate(R.layout.fragment_choose_pins, container, false);
-
-			// setup recyclerview
-			ChoosePinsAdapter adapter = new ChoosePinsAdapter(pins, checkedPins);
-			RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-			recyclerView.setAdapter(adapter);
-			recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
-
-			adapter.asThumbnailObservable().subscribe(this::thumbnailClicked);
 		}
-		return rootView;
+
+		// load views
+		View view = inflater.inflate(R.layout.fragment_choose_pins, container, false);
+
+		// setup recyclerview
+		ChoosePinsAdapter adapter = new ChoosePinsAdapter(pins, checkedPins);
+		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+		recyclerView.setAdapter(adapter);
+		recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
+
+		adapter.asThumbnailObservable().subscribe(this::thumbnailClicked);
+		return view;
 	}
 
 	private void thumbnailClicked(ChoosePinsAdapter.PinView pinView) {
