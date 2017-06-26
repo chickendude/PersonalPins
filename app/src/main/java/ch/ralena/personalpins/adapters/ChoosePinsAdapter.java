@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,11 +28,12 @@ public class ChoosePinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 	private final PublishSubject<PinView> onClickSubject = PublishSubject.create();
 
-
 	List<Pin> pins;
+	List<Pin> checkedPins;
 
-	public ChoosePinsAdapter(List<Pin> pins) {
+	public ChoosePinsAdapter(List<Pin> pins, List<Pin> checkedPins) {
 		this.pins = pins;
+		this.checkedPins = checkedPins;
 	}
 
 	@Override
@@ -55,6 +57,7 @@ public class ChoosePinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 		RelativeLayout videoContainer;
 		VideoView thumbnailVideo;
 		TextView title;
+		CheckBox checkBox;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
@@ -62,9 +65,18 @@ public class ChoosePinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 			videoContainer = (RelativeLayout) itemView.findViewById(R.id.videoContainer);
 			thumbnailVideo = (VideoView) itemView.findViewById(R.id.thumbnailVideo);
 			title = (TextView) itemView.findViewById(R.id.pinTitle);
+			checkBox = (CheckBox) itemView.findViewById(R.id.checkbox);
 		}
 
 		public void bindView(Pin pin) {
+			checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+				if (isChecked) {
+					checkedPins.add(pin);
+				} else {
+					checkedPins.remove(pin);
+				}
+			});
+			checkBox.setChecked(checkedPins.contains(pin));
 			itemView.setOnClickListener(v -> onClickSubject.onNext(new PinView(pin, thumbnailImage)));
 			// load image/video
 			if (pin.getFilepath() != null) {
@@ -88,7 +100,7 @@ public class ChoosePinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 		}
 	}
 
-	public Observable<PinView> asPinObservable() {
+	public Observable<PinView> asThumbnailObservable() {
 		return onClickSubject;
 	}
 
@@ -109,5 +121,4 @@ public class ChoosePinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 			return view;
 		}
 	}
-
 }
