@@ -13,6 +13,7 @@ import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 import ch.ralena.personalpins.R;
@@ -83,8 +84,9 @@ public class ChoosePinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 				if (pin.getType().equals("photo")) {
 					thumbnailImage.setVisibility(View.VISIBLE);
 					videoContainer.setVisibility(View.INVISIBLE);
+					Uri imageUri = Uri.fromFile(new File(pin.getFilepath()));
 					Picasso.with(thumbnailImage.getContext())
-							.load(pin.getFilepath())
+							.load(imageUri)
 							.fit()
 							.centerCrop()
 							.into(thumbnailImage);

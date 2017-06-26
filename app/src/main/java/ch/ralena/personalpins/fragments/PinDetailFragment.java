@@ -22,6 +22,8 @@ import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+
 import ch.ralena.personalpins.FullScreenImageActivity;
 import ch.ralena.personalpins.MainActivity;
 import ch.ralena.personalpins.R;
@@ -96,7 +98,7 @@ public class PinDetailFragment extends Fragment {
 		} else if (pin.getType().equals("photo")) {
 			thumbnailPhoto.setOnClickListener(v -> {
 				Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
-				intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, pin.getFilepath());
+				intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_FILEPATH, pin.getFilepath());
 
 				ActivityOptionsCompat options =
 						ActivityOptionsCompat.makeSceneTransitionAnimation(
@@ -106,8 +108,9 @@ public class PinDetailFragment extends Fragment {
 				ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 			});
 			thumbnailPhoto.setVisibility(View.VISIBLE);
+			Uri imageUri = Uri.fromFile(new File(pin.getFilepath()));
 			Picasso.with(getContext())
-					.load(pin.getFilepath())
+					.load(imageUri)
 					.fit()
 					.centerCrop()
 					.into(thumbnailPhoto);

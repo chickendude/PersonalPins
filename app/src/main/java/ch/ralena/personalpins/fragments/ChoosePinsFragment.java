@@ -33,7 +33,7 @@ import io.realm.Realm;
 import static ch.ralena.personalpins.fragments.PinsFragment.EXTRA_PIN_ID;
 
 public class ChoosePinsFragment extends Fragment {
-	private static final String EXTRA_CHECKED_PINS = "checked_pins";
+	public static final String EXTRA_CHECKED_PINS = "checked_pins";
 	private MainActivity mainActivity;
 
 	// views

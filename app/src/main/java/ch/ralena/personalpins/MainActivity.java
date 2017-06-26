@@ -1,6 +1,8 @@
 package ch.ralena.personalpins;
 
+import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -57,6 +59,20 @@ public class MainActivity extends AppCompatActivity {
 			return true;
 		});
 		bottomNavigationView.setSelectedItemId(R.id.actionBoard);
+
+		requestReadExternalStoragePermission();
+	}
+
+	private void requestReadExternalStoragePermission() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+				if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+					// explain why
+				}
+				requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_EXTERNAL);
+				return;
+			}
+		}
 	}
 
 	@Override
@@ -81,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 	public void showActionBar() {
 		appBarLayout.setExpanded(true);
 	}
+
 	public void hideActionBar() {
 		appBarLayout.setExpanded(false);
 	}

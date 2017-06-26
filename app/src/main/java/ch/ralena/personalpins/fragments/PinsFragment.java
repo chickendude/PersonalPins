@@ -1,10 +1,13 @@
 package ch.ralena.personalpins.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -63,6 +66,7 @@ public class PinsFragment extends Fragment {
 	private List<Pin> allPins;
 	private List<Pin> pins;
 	private Uri mediaUri;
+	private String mediaPath;
 	private EditText searchPins;
 
 	private PinsAdapter adapter;
@@ -124,17 +128,16 @@ public class PinsFragment extends Fragment {
 			String filetype = "";
 			if (requestCode == REQUEST_CHOOSE_PICTURE || requestCode == REQUEST_TAKE_PHOTO) {
 				filetype = "photo";
-				if (data != null) {
-					filepath = data.getData().toString();
-				} else {
-					filepath = mediaUri.toString();
-				}
+				if (requestCode==REQUEST_CHOOSE_PICTURE)
+					filepath = getRealPathFromURI(getContext(), data.getData());
+				else
+					filepath = mediaPath;
 			} else if (requestCode == REQUEST_TAKE_VIDEO || requestCode == REQUEST_CHOOSE_VIDEO) {
 				filetype = "video";
 				if (data != null) {
-					filepath = data.getData().toString();
+					filepath = getRealPathFromURI(getContext(), data.getData());
 				} else {
-					filepath = mediaUri.toString();
+					filepath = getRealPathFromURI(getContext(), mediaUri);
 				}
 			}
 			if (!filepath.equals("")) {
@@ -143,6 +146,31 @@ public class PinsFragment extends Fragment {
 		} else if (resultCode != Activity.RESULT_CANCELED) {
 			Toast.makeText(mainActivity, "Sorry, there was an error!", Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	public static String getRealPathFromURI(Context context, Uri uri) {
+		String filePath = "";
+		String wholeID = DocumentsContract.getDocumentId(uri);
+
+		// Split at colon, use second item in the array
+		String id = wholeID.split(":")[1];
+
+		String[] column = {MediaStore.Images.Media.DATA};
+
+		// where id is equal to
+		String sel = MediaStore.Images.Media._ID + "=?";
+
+		Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+				column, sel, new String[]{id}, null);
+
+		int columnIndex = cursor.getColumnIndex(column[0]);
+
+		if (cursor.moveToFirst()) {
+			filePath = cursor.getString(columnIndex);
+		}
+		cursor.close();
+		return filePath;
+
 	}
 
 	@Override
@@ -252,7 +280,8 @@ public class PinsFragment extends Fragment {
 			try {
 				mediaFile = File.createTempFile(fileName, fileType, mediaStorageDir);
 				// 4. Return file's URI
-				Log.i(TAG, "File: " + Uri.fromFile(mediaFile));
+				mediaPath = mediaFile.getPath();
+				Log.i(TAG, mediaPath);
 				Uri photoURI = FileProvider.getUriForFile(mainActivity, mainActivity.getApplicationContext().getPackageName() + ".provider", mediaFile);
 				return photoURI;
 			} catch (IOException e) {

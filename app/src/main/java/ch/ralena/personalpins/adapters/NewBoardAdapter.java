@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,53 +18,38 @@ import java.util.List;
 
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.objects.Pin;
-import ch.ralena.personalpins.objects.Tag;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
-public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-	private static final String TAG = PinsAdapter.class.getSimpleName();
+public class NewBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+	private static final String TAG = NewBoardAdapter.class.getSimpleName();
 	private static final int TYPE_PIN = 0;
 	private static final int TYPE_NEW = 1;
 
+	private Pin checkedPin;
 
-	private final PublishSubject<PinView> onClickSubject = PublishSubject.create();
-	private final PublishSubject<View> onNewClickSubject = PublishSubject.create();
-
+	private final PublishSubject<Pin> onPinClickSubject = PublishSubject.create();
 
 	List<Pin> pins;
-	private boolean hasNewButton;
 
-	public PinsAdapter(List<Pin> pins, boolean hasNewButton) {
+	public NewBoardAdapter(List<Pin> pins) {
 		this.pins = pins;
-		this.hasNewButton = hasNewButton;
 	}
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		if (viewType == TYPE_NEW) {
-			View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new, parent, false);
-			return new ViewHolderNew(view);
-		} else {
-			View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_pin, parent, false);
-			return new ViewHolder(view);
-		}
+		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_choose_pins, parent, false);
+		return new ViewHolder(view);
 	}
 
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-		if (position < pins.size())
-			((ViewHolder) holder).bindView(pins.get(position));
+		((ViewHolder) holder).bindView(pins.get(position));
 	}
 
 	@Override
 	public int getItemCount() {
-		return hasNewButton ? pins.size() + 1 : pins.size();
-	}
-
-	@Override
-	public int getItemViewType(int position) {
-		return position == pins.size() ? TYPE_NEW : TYPE_PIN;
+		return pins.size();
 	}
 
 	private class ViewHolder extends RecyclerView.ViewHolder {
@@ -71,7 +57,7 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		RelativeLayout videoContainer;
 		VideoView thumbnailVideo;
 		TextView title;
-		TextView tags;
+		CheckBox checkBox;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
@@ -79,16 +65,22 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			videoContainer = (RelativeLayout) itemView.findViewById(R.id.videoContainer);
 			thumbnailVideo = (VideoView) itemView.findViewById(R.id.thumbnailVideo);
 			title = (TextView) itemView.findViewById(R.id.pinTitle);
-			tags = (TextView) itemView.findViewById(R.id.tags);
+			checkBox = (CheckBox) itemView.findViewById(R.id.checkbox);
 		}
 
 		public void bindView(Pin pin) {
-			itemView.setOnClickListener(v -> onClickSubject.onNext(new PinView(pin, thumbnailImage)));
-
+			checkBox.setOnCheckedChangeListener(null);
+			checkBox.setChecked(pin == checkedPin);
+			checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+				checkedPin = pin;
+				notifyDataSetChanged();
+				onPinClickSubject.onNext(pin);
+			});
+			// load image/video
 			if (pin.getFilepath() != null) {
 				if (pin.getType().equals("photo")) {
 					thumbnailImage.setVisibility(View.VISIBLE);
-					videoContainer.setVisibility(View.GONE);
+					videoContainer.setVisibility(View.INVISIBLE);
 					Uri imageUri = Uri.fromFile(new File(pin.getFilepath()));
 					Picasso.with(thumbnailImage.getContext())
 							.load(imageUri)
@@ -96,39 +88,19 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 							.centerCrop()
 							.into(thumbnailImage);
 				} else if (pin.getType().equals("video")) {
-					thumbnailImage.setVisibility(View.GONE);
+					thumbnailImage.setVisibility(View.INVISIBLE);
 					videoContainer.setVisibility(View.VISIBLE);
 					thumbnailVideo.setVideoURI(Uri.parse(pin.getFilepath()));
 					thumbnailVideo.seekTo(1);
 				}
 			}
-
+			// update title
 			title.setText(pin.getTitle());
-
-			StringBuilder stringBuilder = new StringBuilder();
-			int position = 0;
-			for (Tag tag : pin.getTags()) {
-				stringBuilder.append(tag.getTitle());
-				if (++position < pin.getTags().size()) {
-					stringBuilder.append(", ");
-				}
-			}
-			tags.setText(stringBuilder.toString());
 		}
 	}
 
-	private class ViewHolderNew extends RecyclerView.ViewHolder {
-		public ViewHolderNew(View itemView) {
-			super(itemView);
-			itemView.setOnClickListener(v -> onNewClickSubject.onNext(itemView));
-		}
-	}
-
-	public Observable<PinView> asPinObservable() {
-		return onClickSubject;
-	}
-	public Observable<View> asNewObservable() {
-		return onNewClickSubject;
+	public Observable<Pin> asObservable() {
+		return onPinClickSubject;
 	}
 
 	public class PinView {
@@ -148,5 +120,4 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			return view;
 		}
 	}
-
 }

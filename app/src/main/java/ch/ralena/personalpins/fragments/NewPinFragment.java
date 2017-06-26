@@ -27,6 +27,7 @@ import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -86,12 +87,13 @@ public class NewPinFragment extends Fragment {
 		if (filepath != null && filetype != null) {
 			if (filetype.equals("photo")) {
 				thumbnailPhoto.setVisibility(View.VISIBLE);
+				Uri uri = Uri.fromFile(new File(filepath));
 				Picasso.with(view.getContext())
-						.load(filepath)
+						.load(uri)
 						.into(thumbnailPhoto);
 				thumbnailPhoto.setOnClickListener(v -> {
 					Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
-					intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_URI, filepath);
+					intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_FILEPATH, filepath);
 					startActivity(intent);
 				});
 			} else if (filetype.equals("video")) {
