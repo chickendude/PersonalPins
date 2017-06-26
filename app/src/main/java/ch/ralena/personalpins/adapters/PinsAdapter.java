@@ -86,7 +86,7 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			itemView.setOnClickListener(v -> onClickSubject.onNext(new PinView(pin, thumbnailImage)));
 
 			if (pin.getFilepath() != null) {
-				if (pin.getType().equals("photo")) {
+				if (pin.getType().equals(Pin.TYPE_PICTURE)) {
 					thumbnailImage.setVisibility(View.VISIBLE);
 					videoContainer.setVisibility(View.GONE);
 					Uri imageUri = Uri.fromFile(new File(pin.getFilepath()));
@@ -95,7 +95,7 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 							.fit()
 							.centerCrop()
 							.into(thumbnailImage);
-				} else if (pin.getType().equals("video")) {
+				} else if (pin.getType().equals(Pin.TYPE_VIDEO)) {
 					thumbnailImage.setVisibility(View.GONE);
 					videoContainer.setVisibility(View.VISIBLE);
 					thumbnailVideo.setVideoURI(Uri.parse(pin.getFilepath()));

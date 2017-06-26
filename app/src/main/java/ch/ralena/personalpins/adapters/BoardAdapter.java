@@ -1,5 +1,9 @@
 package ch.ralena.personalpins.adapters;
 
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +13,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.objects.Board;
+import ch.ralena.personalpins.objects.Pin;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
@@ -76,11 +82,18 @@ public class BoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 		}
 
 		public void bindView(Board board) {
-			Picasso.with(coverImage.getContext())
-					.load(board.getCoverFilepath())
-					.fit()
-					.centerCrop()
-					.into(coverImage);
+			Pin pin = board.getCoverPin();
+			if (pin.getType().equals(Pin.TYPE_PICTURE)) {
+				Uri coverUri = Uri.fromFile(new File(pin.getFilepath()));
+				Picasso.with(coverImage.getContext())
+						.load(coverUri)
+						.fit()
+						.centerCrop()
+						.into(coverImage);
+			} else {
+				Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(board.getCoverPin().getFilepath(), MediaStore.Video.Thumbnails.MICRO_KIND);
+				coverImage.setImageBitmap(thumbnail);
+			}
 			boardTitle.setText(board.getTitle());
 		}
 	}
@@ -88,12 +101,7 @@ public class BoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 	private class ViewHolderNew extends RecyclerView.ViewHolder {
 		public ViewHolderNew(View view) {
 			super(view);
-			view.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					onClickNewSubject.onNext(v);
-				}
-			});
+			view.setOnClickListener(v -> onClickNewSubject.onNext(v));
 		}
 	}
 }

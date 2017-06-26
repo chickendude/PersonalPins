@@ -121,7 +121,6 @@ public class ChoosePinsFragment extends Fragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.actionConfirm) {
-
 			ArrayList<String> checkedPinIds = new ArrayList<>();
 			for (Pin pin : checkedPins) {
 				checkedPinIds.add(pin.getId());

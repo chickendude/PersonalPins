@@ -127,13 +127,13 @@ public class PinsFragment extends Fragment {
 			String filepath = "";
 			String filetype = "";
 			if (requestCode == REQUEST_CHOOSE_PICTURE || requestCode == REQUEST_TAKE_PHOTO) {
-				filetype = "photo";
+				filetype = Pin.TYPE_PICTURE;
 				if (requestCode==REQUEST_CHOOSE_PICTURE)
 					filepath = getRealPathFromURI(getContext(), data.getData(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 				else
 					filepath = mediaPath;
 			} else if (requestCode == REQUEST_TAKE_VIDEO || requestCode == REQUEST_CHOOSE_VIDEO) {
-				filetype = "video";
+				filetype = Pin.TYPE_VIDEO;
 				if( requestCode == REQUEST_CHOOSE_VIDEO)
 					filepath = getRealPathFromURI(getContext(), data.getData(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
 				else

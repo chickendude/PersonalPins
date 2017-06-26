@@ -70,18 +70,20 @@ public class ChoosePinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 		}
 
 		public void bindView(Pin pin) {
+			checkBox.setChecked(checkedPins.contains(pin));
 			checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
 				if (isChecked) {
-					checkedPins.add(pin);
+					if (!checkedPins.contains(pin)) {
+						checkedPins.add(pin);
+					}
 				} else {
 					checkedPins.remove(pin);
 				}
 			});
-			checkBox.setChecked(checkedPins.contains(pin));
 			itemView.setOnClickListener(v -> onClickSubject.onNext(new PinView(pin, thumbnailImage)));
 			// load image/video
 			if (pin.getFilepath() != null) {
-				if (pin.getType().equals("photo")) {
+				if (pin.getType().equals(Pin.TYPE_PICTURE)) {
 					thumbnailImage.setVisibility(View.VISIBLE);
 					videoContainer.setVisibility(View.INVISIBLE);
 					Uri imageUri = Uri.fromFile(new File(pin.getFilepath()));
@@ -90,7 +92,7 @@ public class ChoosePinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 							.fit()
 							.centerCrop()
 							.into(thumbnailImage);
-				} else if (pin.getType().equals("video")) {
+				} else if (pin.getType().equals(Pin.TYPE_VIDEO)) {
 					thumbnailImage.setVisibility(View.INVISIBLE);
 					videoContainer.setVisibility(View.VISIBLE);
 					thumbnailVideo.setVideoURI(Uri.parse(pin.getFilepath()));

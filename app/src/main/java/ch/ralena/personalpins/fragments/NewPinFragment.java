@@ -85,7 +85,7 @@ public class NewPinFragment extends Fragment {
 		filepath = getArguments().getString(PinsFragment.EXTRA_FILEPATH);
 		filetype = getArguments().getString(PinsFragment.EXTRA_FILETYPE);
 		if (filepath != null && filetype != null) {
-			if (filetype.equals("photo")) {
+			if (filetype.equals(Pin.TYPE_PICTURE)) {
 				thumbnailPhoto.setVisibility(View.VISIBLE);
 				Uri uri = Uri.fromFile(new File(filepath));
 				Picasso.with(view.getContext())
@@ -96,7 +96,7 @@ public class NewPinFragment extends Fragment {
 					intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_FILEPATH, filepath);
 					startActivity(intent);
 				});
-			} else if (filetype.equals("video")) {
+			} else if (filetype.equals(Pin.TYPE_VIDEO)) {
 				thumbnailVideo.setVisibility(View.VISIBLE);
 				thumbnailVideo.setVideoURI(Uri.parse(filepath));
 				thumbnailVideo.setOnCompletionListener(MediaPlayer::start);

@@ -15,7 +15,7 @@ public class Board extends RealmObject {
 
 	private String title;
 	private RealmList<Pin> pins;
-	private String coverFilepath;
+	private Pin coverPin;
 
 	public Board() {super();}
 
@@ -43,11 +43,11 @@ public class Board extends RealmObject {
 		this.pins = pins;
 	}
 
-	public String getCoverFilepath() {
-		return coverFilepath;
+	public Pin getCoverPin() {
+		return coverPin;
 	}
 
-	public void setCoverFilepath(String coverFilepath) {
-		this.coverFilepath = coverFilepath;
+	public void setCoverPin(Pin coverPin) {
+		this.coverPin = coverPin;
 	}
 }

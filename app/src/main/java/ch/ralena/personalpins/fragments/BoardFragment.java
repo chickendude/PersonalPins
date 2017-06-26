@@ -22,6 +22,7 @@ import io.realm.Realm;
 
 public class BoardFragment extends Fragment {
 	private static final String TAG = BoardFragment.class.getSimpleName();
+	public static final String BACK_STACK_BOARD = "back_stack_board";
 	private Realm realm;
 	private List<Board> boards;
 	private List<Board> allBoards;
@@ -82,7 +83,7 @@ public class BoardFragment extends Fragment {
 		ChoosePinsFragment fragment = new ChoosePinsFragment();
 		getFragmentManager()
 				.beginTransaction()
-				.addToBackStack(null)
+				.addToBackStack(BACK_STACK_BOARD)
 				.replace(R.id.frameContainer, fragment)
 				.commit();
 	}
