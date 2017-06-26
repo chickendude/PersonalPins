@@ -82,6 +82,7 @@ public class BoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 		}
 
 		public void bindView(Board board) {
+			itemView.setOnClickListener(v -> onClickBoardSubject.onNext(board));
 			Pin pin = board.getCoverPin();
 			if (pin.getType().equals(Pin.TYPE_PICTURE)) {
 				Uri coverUri = Uri.fromFile(new File(pin.getFilepath()));

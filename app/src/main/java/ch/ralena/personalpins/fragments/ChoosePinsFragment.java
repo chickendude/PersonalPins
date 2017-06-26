@@ -27,27 +27,38 @@ import java.util.List;
 import ch.ralena.personalpins.MainActivity;
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.adapters.ChoosePinsAdapter;
+import ch.ralena.personalpins.objects.Board;
 import ch.ralena.personalpins.objects.Pin;
 import io.realm.Realm;
 
 import static ch.ralena.personalpins.fragments.PinsFragment.EXTRA_PIN_ID;
 
 public class ChoosePinsFragment extends Fragment {
-	public static final String EXTRA_CHECKED_PINS = "checked_pins";
+	public static final String EXTRA_CHECKED_PINS = "extra_checked_pins";
+	public static final String EXTRA_ACTION = "extra_action";
+	public static final String EXTRA_BOARD_ID = "extra_board_id";
+	public static final String ACTION_UPDATE = "action_update";
+	public static final String ACTION_NEW = "action_new";
+
 	private MainActivity mainActivity;
 
 	// views
 	private ActionBar toolbar;
 
 	private Realm realm;
+	private Board board;
 	private List<Pin> pins;
-	private List<Pin> checkedPins;    // the list of currently checked pins
+	private List<Pin> checkedPins;        // the list of currently checked pins
+
+	private String action;                // what action to do when confirming
+
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		realm = Realm.getDefaultInstance();
 		pins = realm.where(Pin.class).findAllSorted("title");
+		action = getArguments().getString(EXTRA_ACTION);
 
 		// set up toolbar
 		mainActivity = (MainActivity) getActivity();
@@ -65,6 +76,13 @@ public class ChoosePinsFragment extends Fragment {
 		if (checkedPins == null) {
 			checkedPins = new ArrayList<>();
 		}
+
+		if (action.equals(ACTION_UPDATE)) {
+			String id = getArguments().getString(EXTRA_BOARD_ID);
+			board = realm.where(Board.class).equalTo("id", id).findFirst();
+			checkedPins.addAll(board.getPins());
+		}
+
 
 		// load views
 		View view = inflater.inflate(R.layout.fragment_choose_pins, container, false);
@@ -121,22 +139,38 @@ public class ChoosePinsFragment extends Fragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.actionConfirm) {
-			ArrayList<String> checkedPinIds = new ArrayList<>();
-			for (Pin pin : checkedPins) {
-				checkedPinIds.add(pin.getId());
+			if(action.equals(ACTION_NEW)) {
+				newBoard();
+			} else if (action.equals(ACTION_UPDATE)) {
+				updateBoard();
 			}
-			NewBoardFragment fragment = new NewBoardFragment();
-			Bundle bundle = new Bundle();
-			bundle.putStringArrayList(EXTRA_CHECKED_PINS, checkedPinIds);
-			fragment.setArguments(bundle);
-
-			getFragmentManager().beginTransaction()
-					.replace(R.id.frameContainer, fragment)
-					.addToBackStack(null)
-					.commit();
 			return true;
 		}
 		return false;
+	}
+
+	private void updateBoard() {
+		realm.executeTransaction(r -> {
+			board.getPins().removeAll(board.getPins());
+			board.getPins().addAll(checkedPins);
+		});
+		getFragmentManager().popBackStack();
+	}
+
+	private void newBoard() {
+		ArrayList<String> checkedPinIds = new ArrayList<>();
+		for (Pin pin : checkedPins) {
+			checkedPinIds.add(pin.getId());
+		}
+		NewBoardFragment fragment = new NewBoardFragment();
+		Bundle bundle = new Bundle();
+		bundle.putStringArrayList(EXTRA_CHECKED_PINS, checkedPinIds);
+		fragment.setArguments(bundle);
+
+		getFragmentManager().beginTransaction()
+				.replace(R.id.frameContainer, fragment)
+				.addToBackStack(null)
+				.commit();
 	}
 
 	@Override

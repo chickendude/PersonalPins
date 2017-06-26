@@ -60,7 +60,7 @@ public class PinsWithTagFragment extends Fragment {
 				pins.add(pin);
 		}
 
-		PinsAdapter adapter = new PinsAdapter(pins, false);
+		PinsAdapter adapter = new PinsAdapter(pins, false, null);
 		adapter.asPinObservable().subscribe(this::loadPinDetail);
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 		recyclerView.setAdapter(adapter);

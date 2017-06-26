@@ -111,7 +111,7 @@ public class PinsFragment extends Fragment {
 		pins = new ArrayList<>(allPins);
 
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-		adapter = new PinsAdapter(pins, true);
+		adapter = new PinsAdapter(pins, true, "New Pin");
 		adapter.asPinObservable().subscribe(this::loadPinDetail);
 		adapter.asNewObservable().subscribe(this::newPinMenu);
 		recyclerView.setAdapter(adapter);

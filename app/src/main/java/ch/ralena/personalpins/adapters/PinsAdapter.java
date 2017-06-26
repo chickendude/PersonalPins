@@ -33,10 +33,12 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	List<Pin> pins;
 	private boolean hasNewButton;
+	private String newButtonText;
 
-	public PinsAdapter(List<Pin> pins, boolean hasNewButton) {
+	public PinsAdapter(List<Pin> pins, boolean hasNewButton, String newButtonText) {
 		this.pins = pins;
 		this.hasNewButton = hasNewButton;
+		this.newButtonText = newButtonText;
 	}
 
 	@Override
@@ -121,6 +123,7 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		public ViewHolderNew(View itemView) {
 			super(itemView);
 			itemView.setOnClickListener(v -> onNewClickSubject.onNext(itemView));
+			((TextView)itemView.findViewById(R.id.textView)).setText(newButtonText);
 		}
 	}
 

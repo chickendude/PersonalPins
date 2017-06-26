@@ -76,7 +76,7 @@ public class PinDetailFragment extends Fragment {
 	}
 
 	private void loadThumbnail() {
-		if (pin.getType().equals("video")) {
+		if (pin.getType().equals(Pin.TYPE_VIDEO)) {
 			thumbnailVideo.setVisibility(View.VISIBLE);
 			thumbnailVideoPlay.setVisibility(View.VISIBLE);
 			thumbnailVideo.setVideoURI(Uri.parse(pin.getFilepath()));
@@ -95,7 +95,7 @@ public class PinDetailFragment extends Fragment {
 				return false;
 			});
 			thumbnailVideo.setOnCompletionListener(mp -> thumbnailVideoPlay.setVisibility(View.VISIBLE));
-		} else if (pin.getType().equals("photo")) {
+		} else if (pin.getType().equals(Pin.TYPE_PICTURE)) {
 			thumbnailPhoto.setOnClickListener(v -> {
 				Intent intent = new Intent(getActivity(), FullScreenImageActivity.class);
 				intent.putExtra(FullScreenImageActivity.EXTRA_IMAGE_FILEPATH, pin.getFilepath());
