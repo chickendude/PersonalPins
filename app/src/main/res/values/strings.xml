@@ -16,4 +16,5 @@
 	<string name="image_transition">imageTransition</string>
 	<string name="new_board">New Board</string>
 	<string name="new_tag">New Tag</string>
+	<string name="remove_tag">Remove Tag</string>
 </resources>

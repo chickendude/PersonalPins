@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.HashMap;
 
 import ch.ralena.personalpins.FullScreenImageActivity;
 import ch.ralena.personalpins.MainActivity;
@@ -43,6 +46,7 @@ public class PinDetailFragment extends Fragment {
 	private ImageView thumbnailVideoPlay;
 	private TextView titleText, noteText;
 	private Button deleteButton;
+	private HashMap<MenuItem, TagView> itemMap;
 
 	@Nullable
 	@Override
@@ -154,14 +158,37 @@ public class PinDetailFragment extends Fragment {
 			title.setText(tag.getTitle());
 			tagLayout.addView(tagView);
 
-			tagView.setOnClickListener(v -> {
-				// view list of pins with that tag
-				//	String title1 = ((TextView) v.findViewById(tagTitle)).getText().toString();
-				//	Tag tag = new Tag(title1);
-				//	tags.remove(tag);
-				((ViewGroup) v.getParent()).removeView(v);
+			tagView.setOnLongClickListener(view -> {
+				itemMap = new HashMap<>();
+				PopupMenu menu = new PopupMenu(mainActivity, view);
+				menu.getMenuInflater().inflate(R.menu.remove_tag, menu.getMenu());
+				menu.setOnMenuItemClickListener(this::onOptionsItemSelected);
+				itemMap.put(menu.getMenu().getItem(0), new TagView(tag, view));
+				menu.show();
+
+				return true;
 			});
 		}
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.actionRemoveTag) {
+			TagView tagView = itemMap.get(item);
+			realm.executeTransaction(r -> pin.getTags().remove(tagView.tag));
+			((LinearLayout)tagView.view.getParent()).removeView(tagView.view);
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private class TagView {
+		public Tag tag;
+		public View view;
+
+		public TagView(Tag tag, View view) {
+			this.tag = tag;
+			this.view = view;
+		}
+
+	}
 }
