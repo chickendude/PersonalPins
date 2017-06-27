@@ -107,7 +107,7 @@ public class NewPinFragment extends Fragment {
 						intent.putExtra(FullScreenVideoActivity.EXTRA_VIDEO_URI, filepath);
 						startActivity(intent);
 					}
-					return true;	// super.onTouchEvent(event) ??
+					return true;
 				});
 			}
 		}
@@ -170,7 +170,8 @@ public class NewPinFragment extends Fragment {
 		});
 		tagEdit.setOnItemClickListener((parent, clickedView, position, id) -> {
 			String tagTitle = parent.getItemAtPosition(position).toString();
-			if (tagStrings.contains(tagTitle)) {
+			Tag tag = new Tag(tagTitle);
+			if (!tags.contains(tag)) {
 				tagEdit.setText("");
 				addTag(tagTitle);
 			}
