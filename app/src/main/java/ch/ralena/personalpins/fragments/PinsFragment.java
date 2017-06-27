@@ -40,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import ch.ralena.personalpins.MainActivity;
@@ -68,6 +69,7 @@ public class PinsFragment extends Fragment {
 	private Uri mediaUri;
 	private String mediaPath;
 	private EditText searchPins;
+	private HashMap<MenuItem, Pin> itemMap;
 
 	private PinsAdapter adapter;
 
@@ -113,6 +115,7 @@ public class PinsFragment extends Fragment {
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 		adapter = new PinsAdapter(pins, true, "New Pin");
 		adapter.asPinObservable().subscribe(this::loadPinDetail);
+		adapter.asPinLongClickObservable().subscribe(this::pinMenu);
 		adapter.asNewObservable().subscribe(this::newPinMenu);
 		recyclerView.setAdapter(adapter);
 		recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -128,13 +131,13 @@ public class PinsFragment extends Fragment {
 			String filetype = "";
 			if (requestCode == REQUEST_CHOOSE_PICTURE || requestCode == REQUEST_TAKE_PHOTO) {
 				filetype = Pin.TYPE_PICTURE;
-				if (requestCode==REQUEST_CHOOSE_PICTURE)
+				if (requestCode == REQUEST_CHOOSE_PICTURE)
 					filepath = getRealPathFromURI(getContext(), data.getData(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 				else
 					filepath = mediaPath;
 			} else if (requestCode == REQUEST_TAKE_VIDEO || requestCode == REQUEST_CHOOSE_VIDEO) {
 				filetype = Pin.TYPE_VIDEO;
-				if( requestCode == REQUEST_CHOOSE_VIDEO)
+				if (requestCode == REQUEST_CHOOSE_VIDEO)
 					filepath = getRealPathFromURI(getContext(), data.getData(), MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
 				else
 					filepath = mediaPath;
@@ -180,6 +183,7 @@ public class PinsFragment extends Fragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Pin pin;
 		switch (item.getItemId()) {
 			case R.id.actionTakePicture:
 				takePicture();
@@ -193,8 +197,39 @@ public class PinsFragment extends Fragment {
 			case R.id.actionChooseVideo:
 				chooseVideo();
 				break;
+			case R.id.actionShare:
+				pin = itemMap.get(item);
+				sharePin(pin);
+				break;
+			case R.id.actionDelete:
+				pin = itemMap.get(item);
+				deletePin(pin);
+				break;
 		}
 		return true;
+	}
+
+	private void sharePin(Pin pin) {
+		File file = new File(pin.getFilepath());
+		Uri uri = Uri.fromFile(file);
+
+		Intent shareIntent = new Intent();
+		shareIntent.setAction(Intent.ACTION_SEND);
+		shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+		if (pin.getType().equals(Pin.TYPE_PICTURE)) {
+			shareIntent.setType("image/jpeg");
+		} else {
+			shareIntent.setType("video/*");
+		}
+		startActivity(Intent.createChooser(shareIntent, "Share pin to..."));
+	}
+
+	private void deletePin(Pin pin) {
+		realm.executeTransaction(r -> r
+				.where(Pin.class)
+				.equalTo("id", pin.getId())
+				.findFirst()
+				.deleteFromRealm());
 	}
 
 	private void takePicture() {
@@ -335,6 +370,17 @@ public class PinsFragment extends Fragment {
 				.replace(R.id.frameContainer, pinDetailFragment)
 				.addToBackStack(null)
 				.commit();
+	}
+
+	private void pinMenu(PinsAdapter.PinView pinView) {
+		View view = pinView.getView();
+		itemMap = new HashMap<>();
+		PopupMenu menu = new PopupMenu(mainActivity, view);
+		menu.getMenuInflater().inflate(R.menu.pin_actions, menu.getMenu());
+		menu.setOnMenuItemClickListener(this::onOptionsItemSelected);
+		itemMap.put(menu.getMenu().getItem(0), pinView.getPin());
+		itemMap.put(menu.getMenu().getItem(1), pinView.getPin());
+		menu.show();
 	}
 
 	private void newPinMenu(View view) {

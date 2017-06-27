@@ -28,6 +28,7 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
 	private final PublishSubject<PinView> onClickSubject = PublishSubject.create();
+	private final PublishSubject<PinView> onLongClickSubject = PublishSubject.create();
 	private final PublishSubject<View> onNewClickSubject = PublishSubject.create();
 
 
@@ -86,6 +87,10 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 		public void bindView(Pin pin) {
 			itemView.setOnClickListener(v -> onClickSubject.onNext(new PinView(pin, thumbnailImage)));
+			itemView.setOnLongClickListener(v -> {
+				onLongClickSubject.onNext(new PinView(pin, thumbnailImage));
+				return true;
+			});
 
 			if (pin.getFilepath() != null) {
 				if (pin.getType().equals(Pin.TYPE_PICTURE)) {
@@ -123,13 +128,18 @@ public class PinsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		public ViewHolderNew(View itemView) {
 			super(itemView);
 			itemView.setOnClickListener(v -> onNewClickSubject.onNext(itemView));
-			((TextView)itemView.findViewById(R.id.textView)).setText(newButtonText);
+			((TextView) itemView.findViewById(R.id.textView)).setText(newButtonText);
 		}
 	}
 
 	public Observable<PinView> asPinObservable() {
 		return onClickSubject;
 	}
+
+	public Observable<PinView> asPinLongClickObservable() {
+		return onLongClickSubject;
+	}
+
 	public Observable<View> asNewObservable() {
 		return onNewClickSubject;
 	}
