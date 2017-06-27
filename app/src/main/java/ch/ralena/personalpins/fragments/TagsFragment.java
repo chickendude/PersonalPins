@@ -52,17 +52,11 @@ public class TagsFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				String searchText = s.toString().toLowerCase();
-				List<Tag> removeTagsList = new ArrayList<>();
 				for (Tag tag : allTags) {
-					if(!tag.getTitle().toLowerCase().contains(searchText)) {
-						removeTagsList.add(tag);
-					}
-				}
-				tags.removeAll(removeTagsList);
-				for (Tag tag : allTags) {
-					if (tag.getTitle().toLowerCase().contains(searchText) && !tags.contains(tag)) {
+					if(!tag.getTitle().toLowerCase().contains(searchText))
+						tags.remove(tag);
+					else if (!tags.contains(tag))
 						tags.add(tag);
-					}
 				}
 				// make sure we're still in alphabetical order
 				Collections.sort(tags, (o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));

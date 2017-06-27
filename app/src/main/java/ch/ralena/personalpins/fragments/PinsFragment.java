@@ -90,23 +90,16 @@ public class PinsFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				String searchText = s.toString().toLowerCase();
-				List<Pin> removePinsList = new ArrayList<>();
-				List<Pin> addPinsList = new ArrayList<>();
 				for (Pin pin : allPins) {
 					boolean inTag = false;
 					for (Tag tag : pin.getTags()) {
 						inTag = inTag || tag.getTitle().toLowerCase().contains(searchText);
 					}
 					if (!inTag)
-						removePinsList.add(pin);
-					else {
-						if (!pins.contains(pin)) {
-							addPinsList.add(pin);
-						}
-					}
+						pins.remove(pin);
+					else if (!pins.contains(pin))
+						pins.add(pin);
 				}
-				pins.removeAll(removePinsList);
-				pins.addAll(addPinsList);
 				for (Pin pin : allPins) {
 					if (pin.getTitle().toLowerCase().contains(searchText) && !pins.contains(pin)) {
 						pins.add(pin);

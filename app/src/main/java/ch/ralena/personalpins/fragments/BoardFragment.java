@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.transition.Explode;
 import android.transition.Fade;
 import android.view.LayoutInflater;
@@ -13,8 +15,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ch.ralena.personalpins.R;
@@ -29,6 +33,7 @@ public class BoardFragment extends Fragment {
 	private Realm realm;
 	private List<Board> boards;
 	private List<Board> allBoards;
+	private BoardAdapter adapter;
 
 	@Nullable
 	@Override
@@ -41,8 +46,33 @@ public class BoardFragment extends Fragment {
 		// load views
 		View view = inflater.inflate(R.layout.fragment_board, container, false);
 
+		EditText searchBoard = (EditText) view.findViewById(R.id.editText);
+		searchBoard.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
 
-		BoardAdapter adapter = new BoardAdapter(boards);
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				String searchText = s.toString().toLowerCase();
+				for (Board board : allBoards) {
+					if(!board.getTitle().toLowerCase().contains(searchText))
+						boards.remove(board);
+					else if(!boards.contains(board))
+						boards.add(board);
+				}
+				// make sure we're still in alphabetical order
+				Collections.sort(boards, (o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
+				adapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+		});
+
+
+		adapter = new BoardAdapter(boards);
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 		recyclerView.setAdapter(adapter);
 		recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
