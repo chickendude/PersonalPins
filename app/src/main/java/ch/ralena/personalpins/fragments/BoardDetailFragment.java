@@ -178,6 +178,7 @@ public class BoardDetailFragment extends Fragment {
 	public void onDestroy() {
 		super.onDestroy();
 		toolbar.setTitle("Personal Pins");
+		toolbar.setDisplayHomeAsUpEnabled(false);
 		if (realm != null) {
 			realm.close();
 			realm = null;
