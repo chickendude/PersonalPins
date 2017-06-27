@@ -46,14 +46,21 @@ public class TagsFragment extends Fragment {
 		searchTags = (EditText) view.findViewById(R.id.editText);
 		searchTags.addTextChangedListener(new TextWatcher() {
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				String searchText = s.toString().toLowerCase();
-				tags.removeIf(tag -> !tag.getTitle().toLowerCase().contains(searchText));
+				List<Tag> removeTagsList = new ArrayList<>();
 				for (Tag tag : allTags) {
-					if(tag.getTitle().toLowerCase().contains(searchText) && !tags.contains(tag)) {
+					if(!tag.getTitle().toLowerCase().contains(searchText)) {
+						removeTagsList.add(tag);
+					}
+				}
+				tags.removeAll(removeTagsList);
+				for (Tag tag : allTags) {
+					if (tag.getTitle().toLowerCase().contains(searchText) && !tags.contains(tag)) {
 						tags.add(tag);
 					}
 				}
@@ -63,7 +70,8 @@ public class TagsFragment extends Fragment {
 			}
 
 			@Override
-			public void afterTextChanged(Editable s) {}
+			public void afterTextChanged(Editable s) {
+			}
 		});
 
 		allTags = realm.where(Tag.class).findAllSorted("title");
