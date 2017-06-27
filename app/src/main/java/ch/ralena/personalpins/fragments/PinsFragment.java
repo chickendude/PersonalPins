@@ -47,6 +47,7 @@ import ch.ralena.personalpins.MainActivity;
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.adapters.PinsAdapter;
 import ch.ralena.personalpins.objects.Pin;
+import ch.ralena.personalpins.objects.Tag;
 import io.realm.Realm;
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -89,7 +90,23 @@ public class PinsFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				String searchText = s.toString().toLowerCase();
-				pins.removeIf(tag -> !tag.getTitle().toLowerCase().contains(searchText));
+				List<Pin> removePinsList = new ArrayList<>();
+				List<Pin> addPinsList = new ArrayList<>();
+				for (Pin pin : allPins) {
+					boolean inTag = false;
+					for (Tag tag : pin.getTags()) {
+						inTag = inTag || tag.getTitle().toLowerCase().contains(searchText);
+					}
+					if (!inTag)
+						removePinsList.add(pin);
+					else {
+						if (!pins.contains(pin)) {
+							addPinsList.add(pin);
+						}
+					}
+				}
+				pins.removeAll(removePinsList);
+				pins.addAll(addPinsList);
 				for (Pin pin : allPins) {
 					if (pin.getTitle().toLowerCase().contains(searchText) && !pins.contains(pin)) {
 						pins.add(pin);
