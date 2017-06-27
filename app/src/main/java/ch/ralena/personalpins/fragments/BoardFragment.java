@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import java.util.List;
 import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.adapters.BoardAdapter;
 import ch.ralena.personalpins.objects.Board;
+import ch.ralena.personalpins.objects.Pin;
 import io.realm.Realm;
 
 public class BoardFragment extends Fragment {
@@ -56,9 +58,9 @@ public class BoardFragment extends Fragment {
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				String searchText = s.toString().toLowerCase();
 				for (Board board : allBoards) {
-					if(!board.getTitle().toLowerCase().contains(searchText))
+					if (!board.getTitle().toLowerCase().contains(searchText))
 						boards.remove(board);
-					else if(!boards.contains(board))
+					else if (!boards.contains(board))
 						boards.add(board);
 				}
 				// make sure we're still in alphabetical order
@@ -132,15 +134,19 @@ public class BoardFragment extends Fragment {
 	}
 
 	private void createBoard(View v) {
-		Bundle bundle = new Bundle();
-		bundle.putString(ChoosePinsFragment.EXTRA_ACTION, ChoosePinsFragment.ACTION_NEW);
-		ChoosePinsFragment fragment = new ChoosePinsFragment();
-		fragment.setArguments(bundle);
-		getFragmentManager()
-				.beginTransaction()
-				.addToBackStack(BACK_STACK_BOARD)
-				.replace(R.id.frameContainer, fragment)
-				.commit();
+		if (!realm.where(Pin.class).findAll().isEmpty()) {
+			Bundle bundle = new Bundle();
+			bundle.putString(ChoosePinsFragment.EXTRA_ACTION, ChoosePinsFragment.ACTION_NEW);
+			ChoosePinsFragment fragment = new ChoosePinsFragment();
+			fragment.setArguments(bundle);
+			getFragmentManager()
+					.beginTransaction()
+					.addToBackStack(BACK_STACK_BOARD)
+					.replace(R.id.frameContainer, fragment)
+					.commit();
+		} else {
+			Toast.makeText(getContext(), "You need to make some pins before you can create a board!", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 
