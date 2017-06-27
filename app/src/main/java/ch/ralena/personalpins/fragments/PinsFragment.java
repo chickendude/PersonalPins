@@ -235,6 +235,7 @@ public class PinsFragment extends Fragment {
 	}
 
 	private void deletePin(Pin pin) {
+		pins.remove(pin);
 		realm.executeTransaction(r -> r
 				.where(Pin.class)
 				.equalTo("id", pin.getId())
