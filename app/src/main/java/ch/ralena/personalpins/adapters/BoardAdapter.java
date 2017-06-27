@@ -1,6 +1,7 @@
 package ch.ralena.personalpins.adapters;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -84,16 +85,21 @@ public class BoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 		public void bindView(Board board) {
 			itemView.setOnClickListener(v -> onClickBoardSubject.onNext(board));
 			Pin pin = board.getCoverPin();
-			if (pin.getType().equals(Pin.TYPE_PICTURE)) {
-				Uri coverUri = Uri.fromFile(new File(pin.getFilepath()));
-				Picasso.with(coverImage.getContext())
-						.load(coverUri)
-						.fit()
-						.centerCrop()
-						.into(coverImage);
+			if(pin != null) {
+				if (pin.getType().equals(Pin.TYPE_PICTURE)) {
+					Uri coverUri = Uri.fromFile(new File(pin.getFilepath()));
+					Picasso.with(coverImage.getContext())
+							.load(coverUri)
+							.fit()
+							.centerCrop()
+							.into(coverImage);
+				} else {
+					Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(board.getCoverPin().getFilepath(), MediaStore.Video.Thumbnails.MICRO_KIND);
+					coverImage.setImageBitmap(thumbnail);
+				}
 			} else {
-				Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(board.getCoverPin().getFilepath(), MediaStore.Video.Thumbnails.MICRO_KIND);
-				coverImage.setImageBitmap(thumbnail);
+				Drawable drawable = itemView.getContext().getResources().getDrawable(R.mipmap.ic_launcher, null);
+				coverImage.setImageDrawable(drawable);
 			}
 			boardTitle.setText(board.getTitle());
 		}

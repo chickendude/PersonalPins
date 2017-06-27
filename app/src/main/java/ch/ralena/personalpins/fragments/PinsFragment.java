@@ -240,6 +240,7 @@ public class PinsFragment extends Fragment {
 				.equalTo("id", pin.getId())
 				.findFirst()
 				.deleteFromRealm());
+		adapter.notifyDataSetChanged();
 	}
 
 	private void takePicture() {
