@@ -31,6 +31,7 @@ import ch.ralena.personalpins.R;
 import ch.ralena.personalpins.adapters.PinsAdapter;
 import ch.ralena.personalpins.objects.Board;
 import ch.ralena.personalpins.objects.Pin;
+import ch.ralena.personalpins.objects.Tag;
 import io.realm.Realm;
 
 public class BoardDetailFragment extends Fragment {
@@ -86,7 +87,16 @@ public class BoardDetailFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				String searchText = s.toString().toLowerCase();
-				pins.removeIf(tag -> !tag.getTitle().toLowerCase().contains(searchText));
+				for (Pin pin : allPins) {
+					boolean inTag = false;
+					for (Tag tag : pin.getTags()) {
+						inTag = inTag || tag.getTitle().toLowerCase().contains(searchText);
+					}
+					if (!inTag)
+						pins.remove(pin);
+					else if (!pins.contains(pin))
+						pins.add(pin);
+				}
 				for (Pin pin : allPins) {
 					if (pin.getTitle().toLowerCase().contains(searchText) && !pins.contains(pin)) {
 						pins.add(pin);
