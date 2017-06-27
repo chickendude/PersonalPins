@@ -1,6 +1,7 @@
 package ch.ralena.personalpins.adapters;
 
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,13 +70,16 @@ public class NewBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		}
 
 		public void bindView(Pin pin) {
-			checkBox.setOnCheckedChangeListener(null);
-			checkBox.setChecked(pin == checkedPin);
-			checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+			checkBox.setChecked(false);
+
+			new Handler().post(() -> checkBox.setChecked(pin==checkedPin));
+
+			checkBox.setOnClickListener((buttonView) -> {
 				checkedPin = pin;
-				notifyDataSetChanged();
 				onPinClickSubject.onNext(pin);
+				notifyDataSetChanged();
 			});
+
 			// load image/video
 			if (pin.getFilepath() != null) {
 				if (pin.getType().equals(Pin.TYPE_PICTURE)) {
